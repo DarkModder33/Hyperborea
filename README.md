@@ -1,0 +1,2 @@
+# Hyperborea
+Trading Assistant
