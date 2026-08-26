@@ -4,13 +4,23 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Hyperion Intelligence | TradeHax AI',
   description:
-    'Elite AI-powered market intelligence and premium tech services. Simulation-first trading tools plus remote IT execution.',
+    'Elite tech execution and simulation-first market research. Websites, repairs, automation, and AI intelligence for operators who ship.',
+  openGraph: {
+    title: 'Hyperion Intelligence | TradeHax AI',
+    description: 'Execution layer for operators who ship.',
+    url: 'https://www.tradehax.net',
+    siteName: 'TradeHax AI',
+    type: 'website'
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen bg-[#0a0a0a] text-white antialiased">{children}</body>
+      <body className="min-h-screen antialiased">
+        <div className="noise" aria-hidden />
+        {children}
+      </body>
     </html>
   );
 }
