@@ -34,5 +34,31 @@ export const site = {
       price: '$250 / mo',
       points: ['Priority fixes', 'Uptime checks', 'Small updates included']
     }
+  ],
+  portfolio: [
+    {
+      tag: 'Website',
+      title: 'Service-business site rebuild',
+      range: '$499–$1,200',
+      problem: 'Old host down, no mobile layout, contact form broken.',
+      result: 'Clean static/Next deploy on Cloudflare, booking path live, owner can update content without a ticket.',
+      stack: 'Next.js · Cloudflare · Form intake'
+    },
+    {
+      tag: 'Repair',
+      title: 'OS rescue + data recovery',
+      range: '$89–$199',
+      problem: 'Laptop would not boot; client needed files for school and work the same week.',
+      result: 'Boot repaired, critical files recovered, backup routine set so it does not repeat.',
+      stack: 'Windows / macOS · Imaging · Backup'
+    },
+    {
+      tag: 'Automation',
+      title: 'Internal workflow script',
+      range: '$299–$800',
+      problem: 'Manual copy-paste between sheets and email was eating hours every week.',
+      result: 'Scoped script + short handoff doc. Operator runs one command instead of twenty clicks.',
+      stack: 'Python / Node · Sheets · Docs'
+    }
   ]
 };

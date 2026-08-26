@@ -14,11 +14,14 @@ export default function Nav() {
               <span className="ml-2 hidden text-white/40 sm:inline">/ TradeHax</span>
             </span>
           </a>
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-1 text-sm sm:gap-2">
             <a href="/services" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white md:inline">
               Services
             </a>
-            <a href="/intelligence" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white md:inline">
+            <a href="/portfolio" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white md:inline">
+              Portfolio
+            </a>
+            <a href="/intelligence" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white lg:inline">
               Intelligence
             </a>
             <a href="/contact" className="btn-primary !px-4 !py-2">
