@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Hyperion / TradeHax starter
 
 Dark + glow green + purple homepage. Static export for Cloudflare Pages.
@@ -30,7 +29,3 @@ git push -u origin main
 
 Then add custom domains tradehax.net and www.tradehax.net.
 Keep Zoho MX/TXT records. Delete old Vercel A/TXT records after Pages is attached.
-=======
-# Hyperborea
-Trading Assistant
->>>>>>> 93eb375f890a2018cc1cdc5defbf98af96a81238
