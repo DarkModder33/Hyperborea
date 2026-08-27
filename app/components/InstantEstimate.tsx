@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { ArrowRight, Wrench, Code2, Guitar, Sparkles } from 'lucide-react';
+import { saveEstimateIntent, track } from '../../lib/analytics';
 
 const EXAMPLE_PROMPTS = [
   'iPhone screen broken',
@@ -18,7 +19,7 @@ type EstimateResult = {
   title: string;
   range: string;
   note: string;
-  href: string;
+  service: string;
   icon: 'repair' | 'dev' | 'music' | 'general';
 };
 
@@ -30,7 +31,7 @@ function matchEstimate(query: string): EstimateResult {
       title: 'Free scope & quote',
       range: '$89+',
       note: 'Tell us what you need — clear range the same day when possible.',
-      href: '/contact',
+      service: 'Other',
       icon: 'general'
     };
   }
@@ -44,7 +45,7 @@ function matchEstimate(query: string): EstimateResult {
       title: 'Device repair / recovery',
       range: '$50 – $200',
       note: 'Remote diagnostics when possible. Mail-in and Greater Philadelphia options available.',
-      href: '/contact',
+      service: 'Device / software repair',
       icon: 'repair'
     };
   }
@@ -58,7 +59,7 @@ function matchEstimate(query: string): EstimateResult {
       title: 'Custom development',
       range: 'From $299',
       note: 'Landing pages to full apps, AI integrations, and e-commerce. Scoped before any invoice.',
-      href: '/contact',
+      service: 'Website system',
       icon: 'dev'
     };
   }
@@ -68,7 +69,7 @@ function matchEstimate(query: string): EstimateResult {
       title: 'Remote guitar lessons',
       range: 'From $40 / session',
       note: '1-on-1 remote sessions via Google Meet, Zoom, or Teams. All levels welcome.',
-      href: '/contact',
+      service: 'Other',
       icon: 'music'
     };
   }
@@ -77,7 +78,7 @@ function matchEstimate(query: string): EstimateResult {
     title: 'Custom quote',
     range: 'Free estimate',
     note: 'We’ll map the right service and send a clear price range quickly.',
-    href: '/contact',
+    service: 'Other',
     icon: 'general'
   };
 }
@@ -91,11 +92,54 @@ export default function InstantEstimate() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitted(true);
+    track('estimate_result', {
+      query: query.slice(0, 80),
+      title: result.title,
+      range: result.range,
+      icon: result.icon
+    });
+    saveEstimateIntent({
+      query,
+      title: result.title,
+      range: result.range,
+      icon: result.icon,
+      at: Date.now()
+    });
   }
 
   function applyPrompt(prompt: string) {
     setQuery(prompt);
     setSubmitted(true);
+    track('estimate_prompt_click', { prompt });
+    const r = matchEstimate(prompt);
+    track('estimate_result', {
+      query: prompt,
+      title: r.title,
+      range: r.range,
+      icon: r.icon
+    });
+    saveEstimateIntent({
+      query: prompt,
+      title: r.title,
+      range: r.range,
+      icon: r.icon,
+      at: Date.now()
+    });
+  }
+
+  function bookClick() {
+    track('estimate_book_click', {
+      title: result.title,
+      range: result.range,
+      icon: result.icon
+    });
+    saveEstimateIntent({
+      query,
+      title: result.title,
+      range: result.range,
+      icon: result.icon,
+      at: Date.now()
+    });
   }
 
   const Icon =
@@ -106,6 +150,8 @@ export default function InstantEstimate() {
         : result.icon === 'music'
           ? Guitar
           : Sparkles;
+
+  const contactHref = `/contact?service=${encodeURIComponent(result.service)}&q=${encodeURIComponent(query.slice(0, 120))}`;
 
   return (
     <div className="w-full max-w-xl">
@@ -122,6 +168,7 @@ export default function InstantEstimate() {
               setQuery(e.target.value);
               if (submitted) setSubmitted(false);
             }}
+            onFocus={() => track('estimate_open', {})}
             placeholder="e.g. iPhone screen broken, need a landing page…"
             className="min-h-[48px] flex-1 rounded-full border border-white/15 bg-black/40 px-5 py-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-[#00ff9f]/50"
             autoComplete="off"
@@ -158,11 +205,15 @@ export default function InstantEstimate() {
               <p className="mt-1 text-2xl font-semibold text-white">{result.range}</p>
               <p className="mt-2 text-sm leading-relaxed text-white/55">{result.note}</p>
               <div className="mt-4 flex flex-wrap gap-3">
-                <a href={result.href} className="btn-primary py-2.5 text-sm">
+                <a href={contactHref} onClick={bookClick} className="btn-primary py-2.5 text-sm">
                   Book free quote
                   <ArrowRight className="h-3.5 w-3.5" />
                 </a>
-                <a href="/services" className="btn-ghost py-2.5 text-sm">
+                <a
+                  href="/services"
+                  onClick={() => track('cta_click', { placement: 'estimate_services' })}
+                  className="btn-ghost py-2.5 text-sm"
+                >
                   View all services
                 </a>
               </div>

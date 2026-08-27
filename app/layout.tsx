@@ -1,25 +1,34 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import AnalyticsProvider from './components/AnalyticsProvider';
+import StickyCta from './components/StickyCta';
 
 export const metadata: Metadata = {
-  title: 'Hyperion Intelligence | TradeHax AI',
+  title: 'TradeHax | Tech repairs, custom builds & music lessons',
   description:
-    'Elite tech execution and simulation-first market research. Websites, repairs, automation, and AI intelligence for operators who ship.',
+    'Founder-led tech execution: device repairs $50–200, custom development from $299, remote guitar lessons. Instant estimates. Greater Philadelphia + worldwide.',
   openGraph: {
-    title: 'Hyperion Intelligence | TradeHax AI',
-    description: 'Execution layer for operators who ship.',
+    title: 'TradeHax | One expert. Full stack.',
+    description: 'Instant estimates. Scoped before invoice. Remote + mail-in.',
     url: 'https://www.tradehax.net',
-    siteName: 'TradeHax AI',
+    siteName: 'TradeHax',
     type: 'website'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'TradeHax | Tech repairs & custom builds',
+    description: 'Instant estimates. Clear scope. No theater.'
   }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen antialiased">
+      <body className="min-h-screen antialiased pb-20 md:pb-0">
         <div className="noise" aria-hidden />
+        <AnalyticsProvider />
         {children}
+        <StickyCta />
       </body>
     </html>
   );

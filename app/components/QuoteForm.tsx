@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useEffect, useState, FormEvent, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { site } from '../../lib/site';
+import { readEstimateIntent, track } from '../../lib/analytics';
 
 const serviceOptions = [
   'Website system',
@@ -20,8 +22,34 @@ const budgetOptions = [
   'Not sure yet'
 ];
 
-export default function QuoteForm() {
+function QuoteFormInner() {
+  const searchParams = useSearchParams();
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [prefillService, setPrefillService] = useState('');
+  const [prefillMessage, setPrefillMessage] = useState('');
+  const [estimateNote, setEstimateNote] = useState<string | null>(null);
+
+  useEffect(() => {
+    const q = searchParams.get('q') || '';
+    const service = searchParams.get('service') || '';
+    const intent = readEstimateIntent();
+
+    if (service) setPrefillService(service);
+    else if (intent?.title) {
+      if (intent.icon === 'repair') setPrefillService('Device / software repair');
+      else if (intent.icon === 'dev') setPrefillService('Website system');
+      else setPrefillService('Other');
+    }
+
+    const parts: string[] = [];
+    if (q) parts.push(q);
+    else if (intent?.query) parts.push(intent.query);
+    if (intent?.range) {
+      parts.push(`\n[Instant estimate shown: ${intent.title} — ${intent.range}]`);
+      setEstimateNote(`${intent.title} · ${intent.range}`);
+    }
+    if (parts.length) setPrefillMessage(parts.join('').trim());
+  }, [searchParams]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,12 +57,16 @@ export default function QuoteForm() {
     const form = e.currentTarget;
     const data = new FormData(form);
 
+    track('quote_submit', {
+      service: String(data.get('service') || ''),
+      budget: String(data.get('budget') || ''),
+      has_estimate: Boolean(estimateNote)
+    });
+
     try {
       const res = await fetch(`https://formsubmit.co/ajax/${site.email}`, {
         method: 'POST',
-        headers: {
-          Accept: 'application/json'
-        },
+        headers: { Accept: 'application/json' },
         body: data
       });
       if (!res.ok) throw new Error('submit failed');
@@ -84,6 +116,12 @@ export default function QuoteForm() {
       <input type="hidden" name="_captcha" value="false" />
       <input type="text" name="_honey" className="hidden" tabIndex={-1} autoComplete="off" />
 
+      {estimateNote && (
+        <div className="rounded-xl border border-[#00ff9f]/25 bg-[#00ff9f]/5 px-4 py-3 text-sm text-[#00ff9f]">
+          Carrying estimate: <strong>{estimateNote}</strong>
+        </div>
+      )}
+
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="block text-sm">
           <span className="text-white/45">Name</span>
@@ -120,7 +158,8 @@ export default function QuoteForm() {
           <select
             required
             name="service"
-            defaultValue=""
+            value={prefillService}
+            onChange={(e) => setPrefillService(e.target.value)}
             className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
           >
             <option value="" disabled>
@@ -143,7 +182,7 @@ export default function QuoteForm() {
           className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
         >
           <option value="" disabled>
-            Optional
+            Optional — helps prioritise
           </option>
           {budgetOptions.map((o) => (
             <option key={o} value={o}>
@@ -159,17 +198,27 @@ export default function QuoteForm() {
           required
           name="message"
           rows={5}
+          value={prefillMessage}
+          onChange={(e) => setPrefillMessage(e.target.value)}
           className="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
           placeholder="Device / site URL, deadline, remote vs on-site…"
         />
       </label>
 
       <button type="submit" disabled={status === 'sending'} className="btn-primary w-full sm:w-auto">
-        {status === 'sending' ? 'Sending…' : 'Request scope'}
+        {status === 'sending' ? 'Sending…' : 'Request written scope'}
       </button>
       <p className="text-xs text-white/35">
-        Submits to {site.email}. No spam list. Written scope before any invoice.
+        Submits to {site.email}. No spam list. Written scope before any invoice. Typical reply under 24h.
       </p>
     </form>
+  );
+}
+
+export default function QuoteForm() {
+  return (
+    <Suspense fallback={<div className="glass h-96 animate-pulse rounded-3xl" />}>
+      <QuoteFormInner />
+    </Suspense>
   );
 }
