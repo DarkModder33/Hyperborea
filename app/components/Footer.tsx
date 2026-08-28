@@ -23,6 +23,9 @@ export default function Footer() {
           <a className="block text-white/70 transition hover:text-[#00ff9f]" href="/services">
             Services
           </a>
+          <a className="block text-white/70 transition hover:text-[#00ff9f]" href="/care">
+            Care retainer
+          </a>
           <a className="block text-white/70 transition hover:text-[#00ff9f]" href="/portfolio">
             Portfolio
           </a>

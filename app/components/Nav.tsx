@@ -18,14 +18,14 @@ export default function Nav() {
             <a href="/services" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white md:inline">
               Services
             </a>
-            <a href="/portfolio" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white md:inline">
+            <a href="/care" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white md:inline">
+              Care
+            </a>
+            <a href="/portfolio" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white lg:inline">
               Portfolio
             </a>
-            <a href="/about" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white md:inline">
+            <a href="/about" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white lg:inline">
               About
-            </a>
-            <a href="/intelligence" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white lg:inline">
-              Intelligence
             </a>
             <a href="/contact" className="btn-primary !px-4 !py-2">
               Book work

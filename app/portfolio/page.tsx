@@ -13,18 +13,18 @@ export default function PortfolioPage() {
           Proof over pitch decks.
         </h1>
         <p className="mt-5 max-w-2xl text-lg text-white/50">
-          Representative work patterns — problem, range, result. Names stay private unless the client
-          asks to be listed.
+          Representative patterns — problem, range, result. This site is a live example of the same standard.
+          Client names stay private unless they ask to be listed.
         </p>
 
-        <div className="mt-14 grid gap-5 lg:grid-cols-3">
+        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {site.portfolio.map((job) => (
             <article key={job.title} className="card-lift glass flex flex-col rounded-3xl p-7">
               <div className="flex items-center justify-between gap-3">
                 <span className="mono rounded-full border border-white/10 px-3 py-1 text-[10px] tracking-[0.14em] text-white/50">
                   {job.tag}
                 </span>
-                <span className="text-sm text-[#00ff9f]">{job.range}</span>
+                <span className="text-sm font-medium text-[#00ff9f]">{job.range}</span>
               </div>
               <h2 className="mt-5 text-xl font-semibold">{job.title}</h2>
               <p className="mt-4 text-sm text-white/45">
@@ -40,14 +40,23 @@ export default function PortfolioPage() {
           ))}
         </div>
 
-        <div className="glass mt-12 flex flex-col items-start justify-between gap-6 rounded-3xl p-8 sm:flex-row sm:items-center">
-          <div>
-            <h2 className="text-2xl font-semibold">Need the same outcome?</h2>
-            <p className="mt-2 text-sm text-white/50">Send the URL or device. Scope before invoice.</p>
+        <div className="mt-12 grid gap-4 sm:grid-cols-2">
+          <div className="glass-strong rounded-3xl p-8">
+            <h2 className="text-xl font-semibold">Need the same outcome?</h2>
+            <p className="mt-2 text-sm text-white/50">Send the URL or device. Written scope before invoice.</p>
+            <a href="/contact" className="btn-primary mt-6">
+              Request a scope <ArrowRight className="h-4 w-4" />
+            </a>
           </div>
-          <a href="/contact" className="btn-primary shrink-0">
-            Request a scope <ArrowRight className="h-4 w-4" />
-          </a>
+          <div className="glass rounded-3xl p-8">
+            <h2 className="text-xl font-semibold">Keep it running</h2>
+            <p className="mt-2 text-sm text-white/50">
+              After launch, Care at $250/mo covers priority fixes and small updates.
+            </p>
+            <a href="/care" className="btn-ghost mt-6">
+              View Care retainer <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
         </div>
       </section>
       <Footer />

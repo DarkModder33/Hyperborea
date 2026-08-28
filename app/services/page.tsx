@@ -1,4 +1,4 @@
-import { ArrowRight, Wrench, Code2, Smartphone, Droplets, HardDrive, Battery, Unlock, Cable } from 'lucide-react';
+import { ArrowRight, Wrench, Code2, Smartphone, Droplets, HardDrive, Battery, Unlock, Cable, Shield } from 'lucide-react';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
 import { site } from '../../lib/site';
@@ -35,7 +35,6 @@ export default function ServicesPage() {
           options available.
         </p>
 
-        {/* High-level packages */}
         <div className="mt-14 grid gap-5 md:grid-cols-2">
           {site.services.map((item) => (
             <article key={item.title} className="card-lift glass rounded-3xl p-8">
@@ -49,11 +48,15 @@ export default function ServicesPage() {
                   </li>
                 ))}
               </ul>
+              {item.title === 'Care retainer' && (
+                <a href="/care" className="mt-6 inline-flex items-center gap-2 text-sm text-[#00ff9f]">
+                  Full Care details <ArrowRight className="h-3.5 w-3.5" />
+                </a>
+              )}
             </article>
           ))}
         </div>
 
-        {/* Device repairs detail */}
         <div className="mt-20">
           <div className="mb-8 flex items-center gap-3">
             <Wrench className="h-6 w-6 text-[#00ff9f]" />
@@ -77,7 +80,6 @@ export default function ServicesPage() {
           </div>
         </div>
 
-        {/* Custom development detail */}
         <div className="mt-20">
           <div className="mb-8 flex items-center gap-3">
             <Code2 className="h-6 w-6 text-[#a855f7]" />
@@ -102,7 +104,23 @@ export default function ServicesPage() {
           </div>
         </div>
 
-        {/* Delivery badges */}
+        <div className="mt-20 glass-strong rounded-3xl p-8 sm:p-10">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex gap-4">
+              <Shield className="h-8 w-8 shrink-0 text-[#00ff9f]" />
+              <div>
+                <h2 className="text-xl font-semibold">After launch — Care at $250/mo</h2>
+                <p className="mt-2 max-w-xl text-sm text-white/50">
+                  Priority fixes, light upkeep, monthly check. The compound layer after one-off work.
+                </p>
+              </div>
+            </div>
+            <a href="/care" className="btn-primary shrink-0">
+              View Care <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+
         <div className="mt-14 flex flex-wrap gap-3">
           <span className="rounded-full border border-[#00ff9f]/25 bg-[#00ff9f]/5 px-4 py-2 text-xs font-medium text-[#00ff9f]">
             Remote diagnostics
