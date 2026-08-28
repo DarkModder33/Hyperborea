@@ -19,7 +19,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
     title: post.title,
     description: post.excerpt,
     path: `/insights/${post.slug}`,
-    type: 'article'
+    type: 'article',
+    insightSlug: post.slug
   });
 }
 
