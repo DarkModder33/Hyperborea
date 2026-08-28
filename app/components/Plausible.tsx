@@ -1,23 +1,19 @@
 import Script from 'next/script';
 
 /**
- * Plausible Analytics
- * 1. Create site at https://plausible.io for domain tradehax.net
- * 2. Optional: add www.tradehax.net as an alias in Plausible site settings
- * Funnel events (estimate_*, cta_click, quote_submit, phone_click) fire via lib/analytics track()
+ * Privacy-friendly analytics by Plausible
+ * Site-specific loader from plausible.io dashboard
  */
 export default function Plausible() {
   return (
     <>
       <Script
-        defer
-        data-domain="tradehax.net"
-        src="https://plausible.io/js/script.js"
+        async
+        src="https://plausible.io/js/pa-UaGwCGBAxey2b_v_E0KBI.js"
         strategy="afterInteractive"
       />
-      {/* Queue API before script loads so early track() calls are not dropped */}
       <Script id="plausible-init" strategy="beforeInteractive">{
-        `window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }`
+        `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()`
       }</Script>
     </>
   );
