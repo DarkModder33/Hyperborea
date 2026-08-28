@@ -1,7 +1,8 @@
 /**
- * Lightweight conversion analytics for static Cloudflare deploy.
- * Events are logged to console + session buffer so you can measure funnel later
- * (Plausible/GA/custom endpoint can be wired to the same track() call).
+ * Conversion analytics for static Cloudflare deploy.
+ * - sessionStorage buffer + console for local debug
+ * - Plausible custom events when script is loaded
+ * - gtag passthrough if present
  */
 
 export type AnalyticsEvent =
@@ -25,11 +26,20 @@ function pushBuffer(entry: { event: AnalyticsEvent; props: Props; t: number }) {
     const raw = sessionStorage.getItem(BUFFER_KEY);
     const list: unknown[] = raw ? JSON.parse(raw) : [];
     list.push(entry);
-    // keep last 40 events in session
     sessionStorage.setItem(BUFFER_KEY, JSON.stringify(list.slice(-40)));
   } catch {
     /* ignore quota */
   }
+}
+
+/** Plausible only accepts string prop values in practice */
+function toPlausibleProps(props: Props): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(props)) {
+    if (v === undefined) continue;
+    out[k] = String(v).slice(0, 120);
+  }
+  return out;
 }
 
 export function track(event: AnalyticsEvent, props: Props = {}) {
@@ -37,19 +47,24 @@ export function track(event: AnalyticsEvent, props: Props = {}) {
   const payload = { event, props, t: Date.now() };
   pushBuffer(payload);
 
-  // Always visible in devtools for operator review
   // eslint-disable-next-line no-console
   console.info('[TradeHax]', event, props);
 
-  // Optional: Plausible custom events if script is present
-  const w = window as Window & { plausible?: (n: string, o?: { props?: Props }) => void };
+  const w = window as Window & {
+    plausible?: ((n: string, o?: { props?: Record<string, string> }) => void) & {
+      q?: unknown[];
+    };
+  };
+
   if (typeof w.plausible === 'function') {
-    w.plausible(event, { props });
+    // Skip page_view — Plausible script records pageviews automatically
+    if (event !== 'page_view') {
+      w.plausible(event, { props: toPlausibleProps(props) });
+    }
   }
 
-  // Optional: gtag if present
   const g = window as Window & { gtag?: (...args: unknown[]) => void };
-  if (typeof g.gtag === 'function') {
+  if (typeof g.gtag === 'function' && event !== 'page_view') {
     g.gtag('event', event, props);
   }
 }
@@ -64,7 +79,6 @@ export function getSessionEvents() {
   }
 }
 
-/** Intent written by InstantEstimate, read by QuoteForm */
 export const ESTIMATE_KEY = 'thx_estimate';
 
 export type EstimateIntent = {
