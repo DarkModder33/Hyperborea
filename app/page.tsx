@@ -21,6 +21,7 @@ import Footer from './components/Footer';
 import InstantEstimate from './components/InstantEstimate';
 import Marquee from './components/Marquee';
 import CommandPanel from './components/CommandPanel';
+import Faq from './components/Faq';
 import { site } from '../lib/site';
 import { insights } from '../lib/content';
 import { pageMeta } from '../lib/seo';
@@ -283,6 +284,7 @@ export default function Home() {
           ))}
         </div>
       </section>
+      <Faq />
       <section className="mx-auto max-w-6xl px-5 pb-24">
         <div className="glass-strong glow-ring overflow-hidden rounded-[2rem] p-8 sm:p-12">
           <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center">
