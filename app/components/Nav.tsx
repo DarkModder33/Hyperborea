@@ -1,5 +1,3 @@
-import { site } from '../../lib/site';
-
 export default function Nav() {
   return (
     <header className="fixed inset-x-0 top-0 z-40">
@@ -21,11 +19,11 @@ export default function Nav() {
             <a href="/care" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white md:inline">
               Care
             </a>
+            <a href="/insights" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white lg:inline">
+              Insights
+            </a>
             <a href="/portfolio" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white lg:inline">
               Portfolio
-            </a>
-            <a href="/about" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white lg:inline">
-              About
             </a>
             <a href="/contact" className="btn-primary !px-4 !py-2">
               Book work

@@ -13,8 +13,7 @@ export default function PortfolioPage() {
           Proof over pitch decks.
         </h1>
         <p className="mt-5 max-w-2xl text-lg text-white/50">
-          Representative patterns — problem, range, result. This site is a live example of the same standard.
-          Client names stay private unless they ask to be listed.
+          Problem, range, result. This site runs on the same standard we ship for clients.
         </p>
 
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
