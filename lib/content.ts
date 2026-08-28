@@ -32,7 +32,8 @@ export const insights: Insight[] = [
       'Back up what you can. Even partial cloud backup beats zero recovery options.',
       'Remove SIM and memory cards if the tray opens. Note passcode only through a secure channel if diagnostics need it.',
       'Describe the failure in one short message: liquid, drop, no power, boot loop — plus your deadline.',
-      'Use a padded mailer or small box. Keep tracking. You will get a written outcome before any open-ended spend.'
+      'Use a padded mailer or small box. Keep tracking. You will get a written outcome before any open-ended spend.',
+      'Full step-by-step is on the Mail-in page at tradehax.net/mail-in.'
     ]
   },
   {
@@ -45,6 +46,32 @@ export const insights: Insight[] = [
       'Open-ended tickets create disputes. A one-page scope — deliverables, range, timeline — turns a maybe into a decision.',
       'Clients compare clarity, not just price. Fast triage plus a written band beats a cheaper quote that never defines done.',
       'Retainers work the same way: Care lists what is inside the monthly envelope so neither side guesses.'
+    ]
+  },
+  {
+    slug: 'when-to-choose-care-retainer',
+    title: 'When a $250/mo Care retainer is worth it',
+    excerpt: 'One-off builds end. Care is for properties that need a reliable pair of hands after launch.',
+    category: 'CARE',
+    date: '2026-08-20',
+    body: [
+      'Choose Care if the site or system is live, revenue-facing, and you do not want to open a new project for every small break.',
+      'Included: priority response, light content updates, monthly health checks within a fair monthly envelope.',
+      'Not included: full redesigns, new feature builds, or unlimited hours — those stay on a separate scope.',
+      'Start from a finished TradeHax build or an onboarding audit if the property was built elsewhere.'
+    ]
+  },
+  {
+    slug: 'remote-guitar-lessons-what-to-expect',
+    title: 'Remote guitar lessons: what to expect in the first month',
+    excerpt: 'Structure beats random tabs. How 1-on-1 remote sessions actually run.',
+    category: 'LESSONS',
+    date: '2026-08-22',
+    body: [
+      'Sessions run on Meet, Zoom, or Teams. You need a playable instrument, a quiet corner, and a stable connection.',
+      'Month one focuses on a clear goal (song, technique, or fundamentals) and a weekly practice target you can actually hit.',
+      'You leave each session with notes — not a vague “keep practicing.”',
+      'Book from the contact form with “guitar lessons” in the message for scheduling.'
     ]
   }
 ];

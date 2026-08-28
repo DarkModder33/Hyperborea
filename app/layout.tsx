@@ -3,6 +3,7 @@ import './globals.css';
 import AnalyticsProvider from './components/AnalyticsProvider';
 import StickyCta from './components/StickyCta';
 import Plausible from './components/Plausible';
+import JsonLd from './components/JsonLd';
 import { SITE_NAME, SITE_URL, ogImageFor } from '../lib/seo';
 
 const defaultOg = ogImageFor('/');
@@ -71,6 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="dark">
       <head>
         <Plausible />
+        <JsonLd />
       </head>
       <body className="min-h-screen antialiased pb-20 md:pb-0">
         <div className="noise" aria-hidden />

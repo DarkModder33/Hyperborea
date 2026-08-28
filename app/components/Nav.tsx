@@ -1,9 +1,25 @@
+'use client';
+
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
+
+const LINKS = [
+  { href: '/services', label: 'Services' },
+  { href: '/care', label: 'Care' },
+  { href: '/insights', label: 'Insights' },
+  { href: '/portfolio', label: 'Portfolio' },
+  { href: '/about', label: 'About' },
+  { href: '/mail-in', label: 'Mail-in' }
+];
+
 export default function Nav() {
+  const [open, setOpen] = useState(false);
+
   return (
     <header className="fixed inset-x-0 top-0 z-40">
       <div className="mx-auto max-w-6xl px-4 pt-4">
         <nav className="glass flex items-center justify-between rounded-2xl px-4 py-3">
-          <a href="/" className="flex items-center gap-3">
+          <a href="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
             <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#00ff9f] to-[#a855f7] text-sm font-bold text-black shadow-[0_0_20px_rgba(0,255,159,0.25)]">
               TH
             </span>
@@ -12,24 +28,61 @@ export default function Nav() {
               <span className="ml-2 hidden text-white/40 sm:inline">/ Hyperion</span>
             </span>
           </a>
-          <div className="flex items-center gap-1 text-sm sm:gap-2">
-            <a href="/services" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white md:inline">
-              Services
-            </a>
-            <a href="/care" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white md:inline">
-              Care
-            </a>
-            <a href="/insights" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white lg:inline">
-              Insights
-            </a>
-            <a href="/portfolio" className="hidden rounded-full px-3 py-2 text-white/70 transition hover:text-white lg:inline">
-              Portfolio
-            </a>
+
+          <div className="hidden items-center gap-1 text-sm md:flex">
+            {LINKS.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className="rounded-full px-3 py-2 text-white/70 transition hover:text-white"
+              >
+                {l.label}
+              </a>
+            ))}
             <a href="/contact" className="btn-primary !px-4 !py-2">
               Book work
             </a>
           </div>
+
+          <div className="flex items-center gap-2 md:hidden">
+            <a href="/contact" className="btn-primary !px-3 !py-2 text-xs">
+              Book
+            </a>
+            <button
+              type="button"
+              aria-label={open ? 'Close menu' : 'Open menu'}
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white"
+            >
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </nav>
+
+        {open && (
+          <div className="glass mt-2 rounded-2xl p-3 md:hidden">
+            <div className="flex flex-col gap-1">
+              {LINKS.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="rounded-xl px-4 py-3 text-sm text-white/80 transition hover:bg-white/5 hover:text-white"
+                >
+                  {l.label}
+                </a>
+              ))}
+              <a
+                href="/contact"
+                onClick={() => setOpen(false)}
+                className="btn-primary mt-2 justify-center"
+              >
+                Request a scope
+              </a>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
