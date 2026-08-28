@@ -1,33 +1,41 @@
 const ITEMS = [
+  'ACCEPTING WORK',
   'Screen repair',
   'Water recovery',
   'Data rescue',
   'Landing pages',
   'Mobile apps',
-  'AI bots',
-  'Shopify flows',
+  'AI integrations',
+  'Shopify / Stripe',
   'Unbricking',
-  'Remote lessons',
-  'Care retainers',
-  'Mail-in service',
-  '24h scope',
+  'Remote guitar',
+  'Care retainers $250/mo',
+  'Mail-in nationwide',
+  'Scope ≤ 24h',
   'Web3 hooks',
-  'Battery & ports'
+  'Battery & ports',
+  'Founder-led'
 ];
 
-export default function Marquee() {
+type Props = {
+  className?: string;
+};
+
+export default function Marquee({ className = '' }: Props) {
   const row = [...ITEMS, ...ITEMS];
   return (
-    <div className="relative overflow-hidden border-y border-white/8 bg-black/40 py-3">
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[var(--void)] to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[var(--void)] to-transparent" />
-      <div className="marquee-track gap-8 px-4">
+    <div className={`relative overflow-hidden border-b border-white/8 bg-black/50 ${className}`}>
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-[var(--void)] to-transparent sm:w-20" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-[var(--void)] to-transparent sm:w-20" />
+      <div className="marquee-track gap-8 px-4 py-3">
         {row.map((label, i) => (
           <span
             key={`${label}-${i}`}
-            className="mono shrink-0 text-[11px] tracking-[0.2em] text-white/35"
+            className={`mono shrink-0 text-[11px] tracking-[0.18em] ${
+              label === 'ACCEPTING WORK' ? 'text-[#00ff9f]' : 'text-white/40'
+            }`}
           >
-            <span className="mr-3 text-[#00ff9f]/70">◆</span>
+            <span className="mr-3 text-[#00ff9f]/80">◆</span>
             {label.toUpperCase()}
           </span>
         ))}

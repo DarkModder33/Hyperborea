@@ -10,7 +10,9 @@ import {
   FileCheck,
   Globe2,
   Zap,
-  Sparkles
+  Sparkles,
+  Star,
+  MessageSquare
 } from 'lucide-react';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
@@ -19,22 +21,59 @@ import Marquee from './components/Marquee';
 import CommandPanel from './components/CommandPanel';
 import { site } from '../lib/site';
 
+const PROOF = [
+  {
+    quote: 'Phone was dead after water damage. Scoped same day, mail-in recovery, files back before the week ended.',
+    who: 'Client · Greater Philly',
+    tag: 'Repair'
+  },
+  {
+    quote: 'Replaced a broken brochure site with a conversion layout that actually takes bookings. Clear price, no drama.',
+    who: 'Service business owner',
+    tag: 'Build'
+  },
+  {
+    quote: 'Remote lessons that stick to a plan. Not random YouTube tabs — structure and accountability.',
+    who: 'Adult beginner',
+    tag: 'Lessons'
+  }
+];
+
+const HIRE_LANES = [
+  {
+    title: 'Broken device',
+    price: '$50–200',
+    href: '/contact?service=Device%20%2F%20software%20repair&q=Device%20repair',
+    blurb: 'Screen, water, data, unbrick, battery'
+  },
+  {
+    title: 'Need a site or app',
+    price: 'From $299',
+    href: '/contact?service=Website%20system&q=Need%20a%20website',
+    blurb: 'Landing → full system, scoped first'
+  },
+  {
+    title: 'Ongoing cover',
+    price: '$250/mo',
+    href: '/contact?service=Care%20retainer&q=Care%20retainer',
+    blurb: 'Priority fixes + small updates'
+  },
+  {
+    title: 'Guitar coaching',
+    price: 'From $40',
+    href: '/contact?service=Other&q=Remote%20guitar%20lessons',
+    blurb: '1-on-1 remote, structured progress'
+  }
+];
+
 export default function Home() {
   return (
     <main>
       <Nav />
 
-      {/* Status strip */}
-      <div className="status-bar border-b border-white/5 pt-[4.5rem]">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-5 py-2.5 text-[11px]">
-          <div className="flex items-center gap-2 text-[#00ff9f]">
-            <span className="pulse-dot relative h-1.5 w-1.5 rounded-full bg-[#00ff9f]" />
-            <span className="mono tracking-[0.16em]">ACCEPTING WORK · THIS WEEK</span>
-          </div>
-          <div className="mono tracking-[0.12em] text-white/35">
-            SCOPE TARGET ≤ 24H · REMOTE + MAIL-IN · FOUNDER-LED
-          </div>
-        </div>
+      {/* Top: moving capability strip (replaces static accepting-work bar) */}
+      <div className="pt-[4.25rem]">
+        <Marquee />
       </div>
 
       {/* Hero */}
@@ -44,18 +83,18 @@ export default function Home() {
           <div className="hero-panel">
             <div className="mono mb-5 inline-flex items-center gap-2 rounded-full border border-[#00ff9f]/30 bg-[#00ff9f]/10 px-3 py-1 text-[11px] tracking-[0.18em] text-[#00ff9f]">
               <Sparkles className="h-3 w-3" />
-              PREMIER EXECUTION · NOT A TEMPLATE SHOP
+              PREMIER EXECUTION · WEALTH FROM SHIPPED WORK
             </div>
             <h1 className="text-4xl font-semibold leading-[0.95] tracking-[-0.045em] sm:text-5xl lg:text-[3.5rem]">
-              Performance-grade
+              A desk that
               <br />
-              tech. Built to
+              turns demand
               <br />
-              <span className="text-gradient">close and ship.</span>
+              <span className="text-gradient">into paid scope.</span>
             </h1>
             <p className="mt-6 max-w-lg text-base leading-relaxed text-white/55 sm:text-lg">
-              Instant estimate → written scope → delivered work. Device recovery, custom systems, and
-              remote coaching from one operator. The site is the standard you buy.
+              Instant estimate → written scope → delivered work. Repairs, custom systems, retainers, and remote
+              coaching. One operator. The site is the product standard.
             </p>
 
             <div className="mt-9">
@@ -79,16 +118,14 @@ export default function Home() {
         </div>
       </section>
 
-      <Marquee />
-
       {/* Metrics */}
-      <section className="border-b border-white/8 bg-white/[0.02]">
+      <section className="border-y border-white/8 bg-white/[0.02]">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px md:grid-cols-4">
           {[
             ['24h', 'Scope SLA'],
             ['$50–200', 'Repair band'],
             ['$299+', 'Build entry'],
-            ['$250/mo', 'Care retainer']
+            ['$250/mo', 'Recurring care']
           ].map(([v, l]) => (
             <div key={l} className="px-6 py-9 text-center transition hover:bg-white/[0.02]">
               <p className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">{v}</p>
@@ -98,13 +135,69 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why operators book */}
+      {/* Hire now — direct money lanes */}
+      <section className="mx-auto max-w-6xl px-5 py-16">
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="mono text-xs tracking-[0.2em] text-[#00ff9f]">HIRE NOW</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+              Pick a lane. Open scope in one step.
+            </h2>
+          </div>
+          <p className="max-w-sm text-sm text-white/40">
+            Pre-filled quote paths. You still get a written scope before any invoice.
+          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {HIRE_LANES.map((lane) => (
+            <a
+              key={lane.title}
+              href={lane.href}
+              className="card-lift glass group rounded-2xl p-5"
+            >
+              <p className="text-xs text-white/40">{lane.blurb}</p>
+              <h3 className="mt-2 text-lg font-semibold">{lane.title}</h3>
+              <p className="mt-1 text-[#00ff9f]">{lane.price}</p>
+              <span className="mt-4 inline-flex items-center gap-1.5 text-sm text-white/60 transition group-hover:text-[#00ff9f]">
+                Start quote <ArrowRight className="h-3.5 w-3.5" />
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* Social proof */}
+      <section className="border-y border-white/8 bg-black/25">
+        <div className="mx-auto max-w-6xl px-5 py-16">
+          <div className="mb-10 flex items-center gap-2">
+            <Star className="h-4 w-4 text-[#00ff9f]" />
+            <p className="mono text-xs tracking-[0.2em] text-[#00ff9f]">OUTCOMES · NOT HYPE</p>
+          </div>
+          <div className="grid gap-5 md:grid-cols-3">
+            {PROOF.map((p) => (
+              <blockquote key={p.tag} className="glass rounded-3xl p-6">
+                <span className="mono rounded-full border border-white/10 px-2.5 py-0.5 text-[10px] tracking-widest text-white/40">
+                  {p.tag}
+                </span>
+                <p className="mt-4 text-sm leading-relaxed text-white/70">“{p.quote}”</p>
+                <footer className="mt-5 text-xs text-white/35">{p.who}</footer>
+              </blockquote>
+            ))}
+          </div>
+          <p className="mt-6 text-center text-[11px] text-white/30">
+            Representative patterns. Names private unless a client asks to be listed. Replace with your real
+            quotes anytime.
+          </p>
+        </div>
+      </section>
+
+      {/* Operator advantage */}
       <section className="mx-auto max-w-6xl px-5 py-20">
         <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-xl">
             <p className="mono text-xs tracking-[0.2em] text-[#00ff9f]">OPERATOR ADVANTAGE</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-              Built like a desk that prints work.
+              Designed to compound cash, not traffic vanity.
             </h2>
           </div>
           <a href="/contact" className="btn-primary shrink-0">
@@ -116,12 +209,12 @@ export default function Home() {
             {
               icon: Zap,
               t: 'Instant range',
-              d: 'Type the problem. See the band. Friction dies before the sales call.'
+              d: 'Problem → price band in seconds. Intent captured before the scroll ends.'
             },
             {
               icon: FileCheck,
               t: 'Scope before pay',
-              d: 'Written deliverables and price. No open-ended “we’ll see.”'
+              d: 'Written deliverables. Higher close rate. Fewer disputes.'
             },
             {
               icon: Clock,
@@ -131,7 +224,7 @@ export default function Home() {
             {
               icon: Globe2,
               t: 'Remote + mail-in',
-              d: 'Global pipeline. Philly when hands-on is required.'
+              d: 'National demand. Local when hardware needs hands.'
             }
           ].map((item) => (
             <div key={item.t} className="card-lift glass rounded-2xl p-6">
@@ -152,8 +245,8 @@ export default function Home() {
               Three lines. One performance bar.
             </h2>
             <p className="mt-4 text-white/50">
-              Cash services fund the product. The product compounds authority. Everything on this page is the
-              quality you purchase.
+              One-off jobs fund the brand. Retainers compound monthly. Market tools build authority — never
+              brokerage.
             </p>
           </div>
           <div className="grid gap-5 md:grid-cols-3">
@@ -194,23 +287,23 @@ export default function Home() {
       {/* Pipeline */}
       <section className="mx-auto max-w-6xl px-5 py-20">
         <p className="mono text-xs tracking-[0.2em] text-white/40">PIPELINE</p>
-        <h2 className="mt-3 text-3xl font-semibold tracking-tight">Estimate → scope → ship.</h2>
+        <h2 className="mt-3 text-3xl font-semibold tracking-tight">Estimate → scope → ship → retain.</h2>
         <div className="mt-12 grid gap-4 md:grid-cols-3">
           {[
             {
               icon: Radio,
               t: '01 · Capture',
-              d: 'Instant estimate or text. Intent carries into the quote form automatically.'
+              d: 'Marquee + estimate + hire lanes. Intent stored into the quote form.'
             },
             {
               icon: Cpu,
               t: '02 · Scope',
-              d: 'Written price and deliverables before work. No accidental open retainers.'
+              d: 'Written price and deliverables. Cash clears before work expands.'
             },
             {
               icon: CheckCircle2,
-              t: '03 · Deliver',
-              d: 'Ship, document, hand off. Optional $250/mo care for ongoing cover.'
+              t: '03 · Deliver + care',
+              d: 'Ship, document, hand off. Upsell $250/mo care for recurring revenue.'
             }
           ].map((step) => (
             <div key={step.t} className="glass rounded-3xl p-6">
@@ -222,33 +315,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Package ladder CTA */}
+      {/* Final conversion */}
       <section className="mx-auto max-w-6xl px-5 pb-24">
         <div className="glass-strong glow-ring overflow-hidden rounded-[2rem] p-8 sm:p-12">
-          <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
-              <p className="mono text-xs tracking-[0.2em] text-[#a855f7]">PACKAGE LADDER</p>
+              <p className="mono text-xs tracking-[0.2em] text-[#a855f7]">NEXT MOVE</p>
               <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-                Clear numbers. Built to upsell.
+                Stop browsing. Open a scope.
               </h2>
-              <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              <p className="mt-4 max-w-lg text-white/50">
+                Text for urgent hardware. Form for builds and retainers. You get a written scope before any
+                charge.
+              </p>
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
                 {site.services.map((s) => (
                   <div
                     key={s.title}
-                    className="rounded-2xl border border-white/10 bg-black/40 p-5 transition hover:border-[#00ff9f]/30"
+                    className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3"
                   >
-                    <p className="text-sm text-white/45">{s.title}</p>
-                    <p className="mt-1 text-xl font-semibold">{s.price}</p>
+                    <p className="text-xs text-white/40">{s.title}</p>
+                    <p className="font-semibold">{s.price}</p>
                   </div>
                 ))}
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <a href="/contact" className="btn-primary justify-center">
-                Request a scope <ArrowRight className="h-4 w-4" />
+              <a href="/contact" className="btn-primary justify-center px-8">
+                Request written scope <ArrowRight className="h-4 w-4" />
               </a>
               <a href={`sms:${site.phoneTel}`} className="btn-ghost justify-center">
+                <MessageSquare className="h-4 w-4" />
                 Text {site.phoneDisplay}
+              </a>
+              <a href="/portfolio" className="text-center text-sm text-white/40 transition hover:text-[#00ff9f]">
+                See portfolio patterns →
               </a>
             </div>
           </div>
