@@ -4,6 +4,7 @@ import AnalyticsProvider from './components/AnalyticsProvider';
 import StickyCta from './components/StickyCta';
 import Plausible from './components/Plausible';
 import JsonLd from './components/JsonLd';
+import CursorGlow from './components/CursorGlow';
 import { SITE_NAME, SITE_URL, ogImageFor } from '../lib/seo';
 
 const defaultOg = ogImageFor('/');
@@ -42,9 +43,7 @@ export const metadata: Metadata = {
       'max-video-preview': -1
     }
   },
-  alternates: {
-    canonical: SITE_URL
-  },
+  alternates: { canonical: SITE_URL },
   openGraph: {
     title: 'TradeHax | One expert. Full stack.',
     description: 'Instant estimates. Scoped before invoice. Remote + mail-in. Repairs, builds, retainers.',
@@ -60,11 +59,7 @@ export const metadata: Metadata = {
     description: 'Instant estimates. Clear scope. Founder-led execution.',
     images: [defaultOg]
   },
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false
-  }
+  formatDetection: { email: false, address: false, telephone: false }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -74,11 +69,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Plausible />
         <JsonLd />
       </head>
-      <body className="min-h-screen antialiased pb-20 md:pb-0">
+      <body className="relative min-h-screen antialiased pb-20 md:pb-0">
+        <div className="aurora" aria-hidden />
         <div className="noise" aria-hidden />
-        <AnalyticsProvider />
-        {children}
-        <StickyCta />
+        <CursorGlow />
+        <div className="relative z-10">
+          <AnalyticsProvider />
+          {children}
+          <StickyCta />
+        </div>
       </body>
     </html>
   );
