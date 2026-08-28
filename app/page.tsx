@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import {
   ArrowRight,
   LineChart,
@@ -22,6 +23,14 @@ import Marquee from './components/Marquee';
 import CommandPanel from './components/CommandPanel';
 import { site } from '../lib/site';
 import { insights } from '../lib/content';
+import { pageMeta } from '../lib/seo';
+
+export const metadata: Metadata = pageMeta({
+  title: 'TradeHax | Tech repairs, custom builds & music lessons',
+  description:
+    'Instant estimates for device repairs ($50–200), custom websites & apps (from $299), Care retainers ($250/mo), and remote guitar lessons. Founder-led. Greater Philadelphia + worldwide.',
+  path: '/'
+});
 
 const PROOF = [
   {
@@ -74,11 +83,9 @@ export default function Home() {
   return (
     <main>
       <Nav />
-
       <div className="pt-[4.25rem]">
         <Marquee />
       </div>
-
       <section className="relative overflow-hidden px-5 pb-16 pt-10 sm:pt-14">
         <div className="pointer-events-none absolute inset-0 grid-fade opacity-80" />
         <div className="relative mx-auto grid max-w-6xl items-start gap-12 lg:grid-cols-[1.15fr_0.85fr]">
@@ -98,11 +105,9 @@ export default function Home() {
               Instant estimate → written scope → delivered work. Repairs, custom systems, retainers, and remote
               coaching. One operator. The site is the product standard.
             </p>
-
             <div className="mt-9">
               <InstantEstimate />
             </div>
-
             <div className="mt-8 flex flex-wrap gap-5 text-sm text-white/40">
               <a href={`mailto:${site.email}`} className="transition hover:text-[#00ff9f]">
                 {site.email}
@@ -113,13 +118,11 @@ export default function Home() {
               <span>{site.region}</span>
             </div>
           </div>
-
           <div className="hero-panel lg:pt-4" style={{ animationDelay: '0.12s' }}>
             <CommandPanel />
           </div>
         </div>
       </section>
-
       <section className="border-y border-white/8 bg-white/[0.02]">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px md:grid-cols-4">
           {[
@@ -135,14 +138,11 @@ export default function Home() {
           ))}
         </div>
       </section>
-
       <section className="mx-auto max-w-6xl px-5 py-16">
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="mono text-xs tracking-[0.2em] text-[#00ff9f]">HIRE NOW</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-              Pick a lane. Open scope in one step.
-            </h2>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Pick a lane. Open scope in one step.</h2>
           </div>
           <p className="max-w-sm text-sm text-white/40">Written scope before any invoice.</p>
         </div>
@@ -159,7 +159,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
       <section className="border-y border-white/8 bg-black/25">
         <div className="mx-auto max-w-6xl px-5 py-16">
           <div className="mb-10 flex items-center gap-2">
@@ -179,7 +178,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       <section className="mx-auto max-w-6xl px-5 py-20">
         <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-xl">
@@ -207,7 +205,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
       <section className="border-y border-white/8 bg-black/30">
         <div className="mx-auto max-w-6xl px-5 py-20">
           <div className="mb-12 max-w-2xl">
@@ -228,9 +225,7 @@ export default function Home() {
             <a href="/contact" className="card-lift glass-strong group rounded-3xl p-8">
               <Wrench className="h-8 w-8 text-[#a855f7]" />
               <h3 className="mt-6 text-xl font-semibold">Repairs & recovery</h3>
-              <p className="mt-3 text-sm leading-relaxed text-white/50">
-                Screens, water, data, unbrick, battery. Remote triage first.
-              </p>
+              <p className="mt-3 text-sm leading-relaxed text-white/50">Screens, water, data, unbrick, battery. Remote triage first.</p>
               <span className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-[#a855f7]">
                 Start quote <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
               </span>
@@ -238,9 +233,7 @@ export default function Home() {
             <a href="/intelligence" className="card-lift glass-strong group rounded-3xl p-8">
               <LineChart className="h-8 w-8 text-[#00ff9f]" />
               <h3 className="mt-6 text-xl font-semibold">Market insights</h3>
-              <p className="mt-3 text-sm leading-relaxed text-white/50">
-                Simulation research only. Authority asset — never brokerage.
-              </p>
+              <p className="mt-3 text-sm leading-relaxed text-white/50">Simulation research only. Authority asset — never brokerage.</p>
               <span className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-[#00ff9f]">
                 Open hub <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
               </span>
@@ -248,16 +241,12 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Content growth engine */}
       <section className="mx-auto max-w-6xl px-5 py-20">
         <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="mono text-xs tracking-[0.2em] text-[#00ff9f]">INSIGHTS</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight">Guides that rank and convert.</h2>
-            <p className="mt-3 max-w-lg text-sm text-white/50">
-              Practical posts tied to services you sell — inbound without paid ads.
-            </p>
+            <p className="mt-3 max-w-lg text-sm text-white/50">Practical posts tied to services you sell — inbound without paid ads.</p>
           </div>
           <a href="/insights" className="btn-ghost shrink-0">
             <BookOpen className="h-4 w-4" />
@@ -277,7 +266,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
       <section className="mx-auto max-w-6xl px-5 py-16">
         <p className="mono text-xs tracking-[0.2em] text-white/40">PIPELINE</p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight">Estimate → scope → ship → retain.</h2>
@@ -295,7 +283,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
       <section className="mx-auto max-w-6xl px-5 pb-24">
         <div className="glass-strong glow-ring overflow-hidden rounded-[2rem] p-8 sm:p-12">
           <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center">
@@ -329,7 +316,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       <Footer />
     </main>
   );
