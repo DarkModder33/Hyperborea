@@ -23,6 +23,8 @@ import CommandPanel from './components/CommandPanel';
 import Faq from './components/Faq';
 import Reveal from './components/Reveal';
 import AnimatedCounter from './components/AnimatedCounter';
+import CompareMatrix from './components/CompareMatrix';
+import TiltCard from './components/TiltCard';
 import { site } from '../lib/site';
 import { insights } from '../lib/content';
 import { pageMeta } from '../lib/seo';
@@ -133,17 +135,21 @@ export default function Home() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {HIRE_LANES.map((lane) => (
-              <a key={lane.title} href={lane.href} className="card-lift glass group rounded-2xl p-5">
+              <TiltCard key={lane.title} href={lane.href} className="glass group rounded-2xl p-5">
                 <p className="text-xs text-white/40">{lane.blurb}</p>
                 <h3 className="mt-2 text-lg font-semibold">{lane.title}</h3>
                 <p className="mt-1 text-[#00ff9f]">{lane.price}</p>
                 <span className="mt-4 inline-flex items-center gap-1.5 text-sm text-white/60 transition group-hover:text-[#00ff9f]">
                   Start quote <ArrowRight className="h-3.5 w-3.5" />
                 </span>
-              </a>
+              </TiltCard>
             ))}
           </div>
         </section>
+      </Reveal>
+
+      <Reveal>
+        <CompareMatrix />
       </Reveal>
 
       <Reveal>
