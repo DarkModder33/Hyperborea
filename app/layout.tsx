@@ -5,6 +5,7 @@ import StickyCta from './components/StickyCta';
 import Plausible from './components/Plausible';
 import JsonLd from './components/JsonLd';
 import CursorGlow from './components/CursorGlow';
+import CommandPalette from './components/CommandPalette';
 import { SITE_NAME, SITE_URL, ogImageFor } from '../lib/seo';
 
 const defaultOg = ogImageFor('/');
@@ -77,6 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AnalyticsProvider />
           {children}
           <StickyCta />
+          <CommandPalette />
         </div>
       </body>
     </html>

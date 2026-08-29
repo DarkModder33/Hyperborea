@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   Wrench,
   MonitorSmartphone,
-  Clock,
   FileCheck,
   Globe2,
   Zap,
@@ -23,6 +22,7 @@ import Marquee from './components/Marquee';
 import CommandPanel from './components/CommandPanel';
 import Faq from './components/Faq';
 import Reveal from './components/Reveal';
+import AnimatedCounter from './components/AnimatedCounter';
 import { site } from '../lib/site';
 import { insights } from '../lib/content';
 import { pageMeta } from '../lib/seo';
@@ -71,14 +71,13 @@ export default function Home() {
         <Marquee />
       </div>
 
-      {/* Hero */}
       <section className="relative overflow-hidden px-5 pb-16 pt-10 sm:pt-14">
         <div className="pointer-events-none absolute inset-0 grid-fade opacity-90" />
         <div className="relative mx-auto grid max-w-6xl items-start gap-12 lg:grid-cols-[1.12fr_0.88fr]">
           <div className="hero-panel">
             <div className="mono mb-5 inline-flex items-center gap-2 rounded-full border border-[#00ff9f]/30 bg-[#00ff9f]/10 px-3 py-1 text-[11px] tracking-[0.18em] text-[#00ff9f]">
               <Sparkles className="h-3 w-3" />
-              EXECUTION DESK · NOT A TEMPLATE SHOP
+              EXECUTION DESK · PRESS ⌘K
             </div>
             <h1 className="text-4xl font-semibold leading-[0.94] tracking-[-0.05em] sm:text-5xl lg:text-[3.65rem]">
               Demand in.
@@ -89,7 +88,7 @@ export default function Home() {
             </h1>
             <p className="mt-6 max-w-lg text-base leading-relaxed text-white/55 sm:text-lg">
               Instant estimate → written scope → shipped work. One founder-led desk for repairs, systems, retainers,
-              and remote coaching. The site is the standard you buy.
+              and remote coaching. Press ⌘K anytime to jump.
             </p>
             <div className="mt-9">
               <InstantEstimate />
@@ -110,24 +109,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Metrics strip */}
       <section className="border-y border-white/8 bg-white/[0.02]">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px md:grid-cols-4">
-          {[
-            ['24h', 'Scope SLA'],
-            ['$50–200', 'Repair band'],
-            ['$299+', 'Build entry'],
-            ['$250/mo', 'Recurring care']
-          ].map(([v, l]) => (
-            <div key={l} className="px-6 py-9 text-center transition hover:bg-white/[0.03]">
-              <p className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">{v}</p>
-              <p className="mt-2 mono text-[10px] uppercase tracking-[0.2em] text-white/35">{l}</p>
-            </div>
-          ))}
+          <AnimatedCounter value="24h" label="Scope SLA" />
+          <AnimatedCounter value="$200" label="Repair band max" />
+          <AnimatedCounter value="$299" label="Build entry" />
+          <AnimatedCounter value="$250" label="Care / mo" />
         </div>
       </section>
 
-      {/* Hire lanes */}
       <Reveal>
         <section className="mx-auto max-w-6xl px-5 py-16">
           <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -156,7 +146,6 @@ export default function Home() {
         </section>
       </Reveal>
 
-      {/* Bento proof */}
       <Reveal>
         <section className="border-y border-white/8 bg-black/30">
           <div className="mx-auto max-w-6xl px-5 py-16">
@@ -167,11 +156,11 @@ export default function Home() {
                 <Zap className="h-6 w-6 text-[#00ff9f]" />
                 <h3 className="mt-4 text-xl font-semibold">Instant range, not a sales maze</h3>
                 <p className="mt-3 text-sm leading-relaxed text-white/50">
-                  Type the problem. See the band. Intent carries into the quote form so nothing is retyped. Competitors
-                  still ask you to “book a call to learn more.”
+                  Type the problem. See the band live. Intent carries into the quote form. Press ⌘K to jump straight
+                  into an estimate path.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-2">
-                  {['estimate_open', 'estimate_result', 'quote_submit'].map((e) => (
+                  {['estimate_open', 'estimate_result', 'quote_submit', '⌘K'].map((e) => (
                     <span key={e} className="mono rounded-full border border-white/10 px-3 py-1 text-[10px] tracking-wide text-white/40">
                       {e}
                     </span>
@@ -197,7 +186,6 @@ export default function Home() {
         </section>
       </Reveal>
 
-      {/* Product surface */}
       <Reveal>
         <section className="mx-auto max-w-6xl px-5 py-20">
           <div className="mb-12 max-w-2xl">
@@ -235,7 +223,6 @@ export default function Home() {
         </section>
       </Reveal>
 
-      {/* Insights */}
       <Reveal>
         <section className="border-y border-white/8 bg-black/25">
           <div className="mx-auto max-w-6xl px-5 py-20">
@@ -264,14 +251,13 @@ export default function Home() {
         </section>
       </Reveal>
 
-      {/* Pipeline */}
       <Reveal>
         <section className="mx-auto max-w-6xl px-5 py-16">
           <p className="mono text-xs tracking-[0.2em] text-white/40">PIPELINE</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight">Estimate → scope → ship → retain.</h2>
           <div className="mt-12 grid gap-4 md:grid-cols-3">
             {[
-              { icon: Radio, t: '01 · Capture', d: 'Marquee + estimate + hire lanes. Intent stored into the quote form.' },
+              { icon: Radio, t: '01 · Capture', d: '⌘K, estimate, or hire lanes. Intent stored into the quote form.' },
               { icon: Cpu, t: '02 · Scope', d: 'Written price and deliverables. Cash clears before work expands.' },
               { icon: CheckCircle2, t: '03 · Deliver + care', d: 'Ship, document, hand off. Upsell $250/mo care for recurring revenue.' }
             ].map((step) => (
@@ -289,7 +275,6 @@ export default function Home() {
         <Faq />
       </Reveal>
 
-      {/* Final CTA */}
       <Reveal>
         <section className="mx-auto max-w-6xl px-5 pb-24">
           <div className="glass-strong glow-ring overflow-hidden rounded-[2rem] p-8 sm:p-12">

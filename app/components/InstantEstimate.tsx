@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Wrench, Code2, Guitar, Sparkles } from 'lucide-react';
 import { saveEstimateIntent, track } from '../../lib/analytics';
 
@@ -14,6 +14,14 @@ const EXAMPLE_PROMPTS = [
   'Data recovery from failed drive',
   'Unbrick my phone'
 ] as const;
+
+const TYPEWRITER = [
+  'iPhone screen broken…',
+  'laptop water damage…',
+  'Need a landing page…',
+  'Build a mobile app…',
+  'Unbrick my phone…'
+];
 
 type EstimateResult = {
   title: string;
@@ -51,7 +59,7 @@ function matchEstimate(query: string): EstimateResult {
   }
 
   if (
-    /website|landing|web app|mobile app|ios|android app|shopify|ecommerce|e-commerce|api|backend|ai bot|chatbot|automation|web3|smart contract|next\.js|react/.test(
+    /website|landing|web app|mobile app|ios|android app|shopify|ecommerce|e-commerce|api|backend|ai bot|chatbot|automation|web3|smart contract|next\.js|react|care retainer/.test(
       q
     )
   ) {
@@ -86,8 +94,52 @@ function matchEstimate(query: string): EstimateResult {
 export default function InstantEstimate() {
   const [query, setQuery] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [ph, setPh] = useState('');
+  const [twIndex, setTwIndex] = useState(0);
+
+  // Deep-link: /?q=...#estimate
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q');
+    if (q) {
+      setQuery(q);
+      setSubmitted(true);
+      const r = matchEstimate(q);
+      saveEstimateIntent({ query: q, title: r.title, range: r.range, icon: r.icon, at: Date.now() });
+      track('estimate_result', { query: q.slice(0, 80), title: r.title, range: r.range, source: 'deeplink' });
+    }
+  }, []);
+
+  // Typewriter placeholder when empty
+  useEffect(() => {
+    if (query) return;
+    let i = 0;
+    let deleting = false;
+    let phrase = TYPEWRITER[twIndex % TYPEWRITER.length];
+    const id = setInterval(() => {
+      if (!deleting) {
+        i += 1;
+        setPh(phrase.slice(0, i));
+        if (i >= phrase.length) {
+          deleting = true;
+          setTimeout(() => {}, 800);
+        }
+      } else {
+        i -= 1;
+        setPh(phrase.slice(0, Math.max(0, i)));
+        if (i <= 0) {
+          deleting = false;
+          setTwIndex((n) => n + 1);
+          phrase = TYPEWRITER[(twIndex + 1) % TYPEWRITER.length];
+        }
+      }
+    }, deleting ? 28 : 42);
+    return () => clearInterval(id);
+  }, [query, twIndex]);
 
   const result = useMemo(() => matchEstimate(query), [query]);
+  const live = query.length > 2;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -154,25 +206,27 @@ export default function InstantEstimate() {
   const contactHref = `/contact?service=${encodeURIComponent(result.service)}&q=${encodeURIComponent(query.slice(0, 120))}`;
 
   return (
-    <div className="w-full max-w-xl">
+    <div id="estimate" className="w-full max-w-xl scroll-mt-28">
       <form onSubmit={handleSubmit}>
         <label htmlFor="instant-estimate" className="sr-only">
           Describe your issue or project for an instant estimate
         </label>
         <div className="flex flex-col gap-3 sm:flex-row">
-          <input
-            id="instant-estimate"
-            type="text"
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              if (submitted) setSubmitted(false);
-            }}
-            onFocus={() => track('estimate_open', {})}
-            placeholder="e.g. iPhone screen broken, need a landing page…"
-            className="min-h-[48px] flex-1 rounded-full border border-white/15 bg-black/40 px-5 py-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-[#00ff9f]/50"
-            autoComplete="off"
-          />
+          <div className="relative min-h-[48px] flex-1">
+            <input
+              id="instant-estimate"
+              type="text"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                if (submitted) setSubmitted(false);
+              }}
+              onFocus={() => track('estimate_open', {})}
+              placeholder={query ? '' : ph || 'Describe the job…'}
+              className="h-full min-h-[48px] w-full rounded-full border border-white/15 bg-black/50 px-5 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-[#00ff9f]/55 focus:shadow-[0_0_24px_rgba(0,255,159,0.12)]"
+              autoComplete="off"
+            />
+          </div>
           <button type="submit" className="btn-primary shrink-0">
             Get free estimate
             <ArrowRight className="h-4 w-4" />
@@ -193,16 +247,16 @@ export default function InstantEstimate() {
         ))}
       </div>
 
-      {(submitted || query.length > 2) && (
-        <div className="mt-6 rounded-2xl border border-[#00ff9f]/25 bg-[#00ff9f]/5 p-5 sm:p-6">
+      {(submitted || live) && (
+        <div className="mt-6 overflow-hidden rounded-2xl border border-[#00ff9f]/30 bg-gradient-to-br from-[#00ff9f]/10 to-transparent p-5 sm:p-6">
           <div className="flex items-start gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#00ff9f]/15">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#00ff9f]/15 ring-1 ring-[#00ff9f]/25">
               <Icon className="h-5 w-5 text-[#00ff9f]" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="mono text-[10px] uppercase tracking-[0.18em] text-[#00ff9f]">Instant range</p>
+              <p className="mono text-[10px] uppercase tracking-[0.18em] text-[#00ff9f]">Live range</p>
               <h3 className="mt-1 text-lg font-semibold text-white">{result.title}</h3>
-              <p className="mt-1 text-2xl font-semibold text-white">{result.range}</p>
+              <p className="mt-1 text-3xl font-semibold tracking-tight text-white">{result.range}</p>
               <p className="mt-2 text-sm leading-relaxed text-white/55">{result.note}</p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <a href={contactHref} onClick={bookClick} className="btn-primary py-2.5 text-sm">
@@ -220,8 +274,7 @@ export default function InstantEstimate() {
             </div>
           </div>
           <p className="mt-4 border-t border-white/8 pt-3 text-[11px] text-white/35">
-            Ranges are estimates only. Final price after short discovery. Remote, mail-in, and Greater Philadelphia
-            options available.
+            Estimates only. Final price after short discovery. Remote, mail-in, Greater Philadelphia.
           </p>
         </div>
       )}
