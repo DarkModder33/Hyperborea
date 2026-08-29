@@ -1,6 +1,7 @@
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ShieldAlert } from 'lucide-react';
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
+import ScannerDemo from '../components/ScannerDemo';
 import { site } from '../../lib/site';
 
 export default function IntelligencePage() {
@@ -13,28 +14,32 @@ export default function IntelligencePage() {
           Simulation-first market research.
         </h1>
         <p className="mt-5 max-w-2xl text-lg text-white/50">
-          Scanners, watchlists, and risk framing for study. No brokerage. No live trade execution.
-          Education and research only.
+          Scanners, watchlists, and risk framing for study. No brokerage. No live trade execution. Education and
+          research only.
         </p>
 
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
-          {[
-            ['Scanner layer', 'Filtered market snapshots for research workflows — not buy/sell commands.'],
-            ['Risk framing', 'Position sizing context and volatility gates before capital is discussed.'],
-            ['$19 / month', 'Paid research access after waitlist. Cancel anytime. Simulation only.']
-          ].map(([t, d]) => (
-            <article key={t} className="glass rounded-3xl p-7">
-              <h2 className="text-lg font-semibold text-[#a855f7]">{t}</h2>
-              <p className="mt-3 text-sm leading-relaxed text-white/50">{d}</p>
-            </article>
-          ))}
+        <div className="mt-12 grid items-start gap-8 lg:grid-cols-2">
+          <ScannerDemo />
+          <div className="space-y-5">
+            {[
+              ['Scanner layer', 'Filtered snapshots for research workflows — not buy/sell commands.'],
+              ['Risk framing', 'Position sizing context and volatility gates before capital is discussed.'],
+              ['$19 / month', 'Paid research access after waitlist. Cancel anytime. Simulation only.']
+            ].map(([t, d]) => (
+              <article key={t} className="glass rounded-3xl p-6">
+                <h2 className="text-lg font-semibold text-[#a855f7]">{t}</h2>
+                <p className="mt-2 text-sm leading-relaxed text-white/50">{d}</p>
+              </article>
+            ))}
+          </div>
         </div>
 
-        <div className="glass mt-10 rounded-3xl p-7">
+        <div className="glass mt-10 flex gap-4 rounded-3xl p-7">
+          <ShieldAlert className="h-6 w-6 shrink-0 text-[#a855f7]" />
           <p className="text-sm leading-relaxed text-white/45">
-            Nothing on this site is investment advice. Markets can destroy capital. If you cannot afford
-            to lose the money, do not trade. Hyperion is a research interface — not a broker, not a
-            signal service that places orders.
+            Nothing on this site is investment advice. Markets can destroy capital. If you cannot afford to lose the
+            money, do not trade. Hyperion is a research interface — not a broker, not a signal service that places
+            orders.
           </p>
         </div>
 
