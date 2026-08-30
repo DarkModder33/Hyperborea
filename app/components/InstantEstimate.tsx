@@ -7,21 +7,11 @@ import { saveEstimateIntent, track } from '../../lib/analytics';
 const EXAMPLE_PROMPTS = [
   'iPhone screen broken',
   'laptop water damage',
-  'Android battery replacement',
-  'Need a landing page',
-  'Build a mobile app',
-  'Guitar lessons remote',
-  'Data recovery from failed drive',
-  'Unbrick my phone'
+  'Need a website',
+  'Android battery',
+  'Data recovery',
+  'Guitar lessons'
 ] as const;
-
-const TYPEWRITER = [
-  'iPhone screen broken…',
-  'laptop water damage…',
-  'Need a landing page…',
-  'Build a mobile app…',
-  'Unbrick my phone…'
-];
 
 type EstimateResult = {
   title: string;
@@ -36,47 +26,57 @@ function matchEstimate(query: string): EstimateResult {
 
   if (!q) {
     return {
-      title: 'Free scope & quote',
-      range: '$89+',
-      note: 'Tell us what you need — clear range the same day when possible.',
+      title: 'Custom quote',
+      range: 'Free estimate',
+      note: 'Describe the job for a typical price band.',
       service: 'Other',
       icon: 'general'
     };
   }
 
   if (
-    /screen|display|glass|cracked|broken phone|iphone|android|tablet|ipad|battery|charging|port|water|liquid|damage|data recover|unbrick|esim|imei|esn|firmware|bricked/.test(
+    /screen|display|glass|cracked|broken phone|iphone|android|tablet|ipad|battery|charging|port|water|liquid|damage|data recover|unbrick|firmware|bricked|phone|laptop|pc repair/.test(
       q
     )
   ) {
     return {
       title: 'Device repair / recovery',
       range: '$50 – $200',
-      note: 'Remote diagnostics when possible. Mail-in and Greater Philadelphia options available.',
+      note: 'Remote check when possible. Mail-in and Greater Philadelphia available.',
       service: 'Device / software repair',
       icon: 'repair'
     };
   }
 
   if (
-    /website|landing|web app|mobile app|ios|android app|shopify|ecommerce|e-commerce|api|backend|ai bot|chatbot|automation|web3|smart contract|next\.js|react|care retainer/.test(
+    /website|landing|web app|mobile app|shopify|ecommerce|e-commerce|api|backend|chatbot|automation|next\.js|react|site|webpage/.test(
       q
     )
   ) {
     return {
-      title: 'Custom development',
+      title: 'Website or custom build',
       range: 'From $299',
-      note: 'Landing pages to full apps, AI integrations, and e-commerce. Scoped before any invoice.',
+      note: 'Landing pages to fuller systems. Written scope before any invoice.',
       service: 'Website system',
       icon: 'dev'
     };
   }
 
-  if (/guitar|lesson|music|coaching|practice|song|riff/.test(q)) {
+  if (/care|retainer|maintenance|monthly/.test(q)) {
+    return {
+      title: 'Care retainer',
+      range: '$250 / month',
+      note: 'Priority fixes and light updates for live sites.',
+      service: 'Care retainer',
+      icon: 'dev'
+    };
+  }
+
+  if (/guitar|lesson|music|coaching/.test(q)) {
     return {
       title: 'Remote guitar lessons',
       range: 'From $40 / session',
-      note: '1-on-1 remote sessions via Google Meet, Zoom, or Teams. All levels welcome.',
+      note: '1-on-1 on Meet, Zoom, or Teams.',
       service: 'Other',
       icon: 'music'
     };
@@ -85,7 +85,7 @@ function matchEstimate(query: string): EstimateResult {
   return {
     title: 'Custom quote',
     range: 'Free estimate',
-    note: 'We’ll map the right service and send a clear price range quickly.',
+    note: 'We will map the right service and send a clear range.',
     service: 'Other',
     icon: 'general'
   };
@@ -94,10 +94,7 @@ function matchEstimate(query: string): EstimateResult {
 export default function InstantEstimate() {
   const [query, setQuery] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  const [ph, setPh] = useState('');
-  const [twIndex, setTwIndex] = useState(0);
 
-  // Deep-link: /?q=...#estimate
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
@@ -107,39 +104,11 @@ export default function InstantEstimate() {
       setSubmitted(true);
       const r = matchEstimate(q);
       saveEstimateIntent({ query: q, title: r.title, range: r.range, icon: r.icon, at: Date.now() });
-      track('estimate_result', { query: q.slice(0, 80), title: r.title, range: r.range, source: 'deeplink' });
     }
   }, []);
 
-  // Typewriter placeholder when empty
-  useEffect(() => {
-    if (query) return;
-    let i = 0;
-    let deleting = false;
-    let phrase = TYPEWRITER[twIndex % TYPEWRITER.length];
-    const id = setInterval(() => {
-      if (!deleting) {
-        i += 1;
-        setPh(phrase.slice(0, i));
-        if (i >= phrase.length) {
-          deleting = true;
-          setTimeout(() => {}, 800);
-        }
-      } else {
-        i -= 1;
-        setPh(phrase.slice(0, Math.max(0, i)));
-        if (i <= 0) {
-          deleting = false;
-          setTwIndex((n) => n + 1);
-          phrase = TYPEWRITER[(twIndex + 1) % TYPEWRITER.length];
-        }
-      }
-    }, deleting ? 28 : 42);
-    return () => clearInterval(id);
-  }, [query, twIndex]);
-
   const result = useMemo(() => matchEstimate(query), [query]);
-  const live = query.length > 2;
+  const showResult = submitted || query.trim().length > 2;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -147,8 +116,7 @@ export default function InstantEstimate() {
     track('estimate_result', {
       query: query.slice(0, 80),
       title: result.title,
-      range: result.range,
-      icon: result.icon
+      range: result.range
     });
     saveEstimateIntent({
       query,
@@ -164,32 +132,11 @@ export default function InstantEstimate() {
     setSubmitted(true);
     track('estimate_prompt_click', { prompt });
     const r = matchEstimate(prompt);
-    track('estimate_result', {
-      query: prompt,
-      title: r.title,
-      range: r.range,
-      icon: r.icon
-    });
     saveEstimateIntent({
       query: prompt,
       title: r.title,
       range: r.range,
       icon: r.icon,
-      at: Date.now()
-    });
-  }
-
-  function bookClick() {
-    track('estimate_book_click', {
-      title: result.title,
-      range: result.range,
-      icon: result.icon
-    });
-    saveEstimateIntent({
-      query,
-      title: result.title,
-      range: result.range,
-      icon: result.icon,
       at: Date.now()
     });
   }
@@ -206,75 +153,81 @@ export default function InstantEstimate() {
   const contactHref = `/contact?service=${encodeURIComponent(result.service)}&q=${encodeURIComponent(query.slice(0, 120))}`;
 
   return (
-    <div id="estimate" className="w-full max-w-xl scroll-mt-28">
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="instant-estimate" className="sr-only">
-          Describe your issue or project for an instant estimate
+    <div id="estimate" className="w-full scroll-mt-28">
+      <form onSubmit={handleSubmit} className="glass rounded-2xl p-4 sm:p-5">
+        <label htmlFor="instant-estimate" className="mb-2 block text-left text-sm font-medium text-white/70">
+          What do you need help with?
         </label>
         <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="relative min-h-[48px] flex-1">
-            <input
-              id="instant-estimate"
-              type="text"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                if (submitted) setSubmitted(false);
-              }}
-              onFocus={() => track('estimate_open', {})}
-              placeholder={query ? '' : ph || 'Describe the job…'}
-              className="h-full min-h-[48px] w-full rounded-full border border-white/15 bg-black/50 px-5 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-[#00ff9f]/55 focus:shadow-[0_0_24px_rgba(0,255,159,0.12)]"
-              autoComplete="off"
-            />
-          </div>
+          <input
+            id="instant-estimate"
+            type="text"
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              if (submitted) setSubmitted(false);
+            }}
+            onFocus={() => track('estimate_open', {})}
+            placeholder="e.g. iPhone screen broken"
+            className="min-h-[48px] flex-1 rounded-xl border border-white/15 bg-black/50 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-[#00ff9f]/50"
+            autoComplete="off"
+          />
           <button type="submit" className="btn-primary shrink-0">
-            Get free estimate
+            Get estimate
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          {EXAMPLE_PROMPTS.map((prompt) => (
+            <button
+              key={prompt}
+              type="button"
+              onClick={() => applyPrompt(prompt)}
+              className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/60 transition hover:border-[#00ff9f]/40 hover:text-[#00ff9f]"
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
       </form>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        {EXAMPLE_PROMPTS.map((prompt) => (
-          <button
-            key={prompt}
-            type="button"
-            onClick={() => applyPrompt(prompt)}
-            className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/60 transition hover:border-[#00ff9f]/40 hover:bg-[#00ff9f]/10 hover:text-[#00ff9f]"
-          >
-            {prompt}
-          </button>
-        ))}
-      </div>
-
-      {(submitted || live) && (
-        <div className="mt-6 overflow-hidden rounded-2xl border border-[#00ff9f]/30 bg-gradient-to-br from-[#00ff9f]/10 to-transparent p-5 sm:p-6">
+      {showResult && (
+        <div
+          className="mt-4 rounded-2xl border border-[#00ff9f]/30 bg-[#00ff9f]/5 p-5 text-left"
+          role="status"
+          aria-live="polite"
+        >
           <div className="flex items-start gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#00ff9f]/15 ring-1 ring-[#00ff9f]/25">
-              <Icon className="h-5 w-5 text-[#00ff9f]" />
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#00ff9f]/15">
+              <Icon className="h-5 w-5 text-[#00ff9f]" aria-hidden />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="mono text-[10px] uppercase tracking-[0.18em] text-[#00ff9f]">Live range</p>
-              <h3 className="mt-1 text-lg font-semibold text-white">{result.title}</h3>
-              <p className="mt-1 text-3xl font-semibold tracking-tight text-white">{result.range}</p>
-              <p className="mt-2 text-sm leading-relaxed text-white/55">{result.note}</p>
-              <div className="mt-4 flex flex-wrap gap-3">
-                <a href={contactHref} onClick={bookClick} className="btn-primary py-2.5 text-sm">
-                  Book free quote
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </a>
-                <a
-                  href="/services"
-                  onClick={() => track('cta_click', { placement: 'estimate_services' })}
-                  className="btn-ghost py-2.5 text-sm"
-                >
-                  View all services
-                </a>
-              </div>
+              <p className="text-sm text-white/50">Typical range</p>
+              <h3 className="mt-0.5 text-lg font-semibold text-white">{result.title}</h3>
+              <p className="mt-1 text-2xl font-semibold text-[#00ff9f]">{result.range}</p>
+              <p className="mt-2 text-sm text-white/55">{result.note}</p>
+              <a
+                href={contactHref}
+                onClick={() => {
+                  track('estimate_book_click', { title: result.title, range: result.range });
+                  saveEstimateIntent({
+                    query,
+                    title: result.title,
+                    range: result.range,
+                    icon: result.icon,
+                    at: Date.now()
+                  });
+                }}
+                className="btn-primary mt-4 inline-flex"
+              >
+                Continue to quote form
+                <ArrowRight className="h-4 w-4" />
+              </a>
             </div>
           </div>
-          <p className="mt-4 border-t border-white/8 pt-3 text-[11px] text-white/35">
-            Estimates only. Final price after short discovery. Remote, mail-in, Greater Philadelphia.
+          <p className="mt-4 border-t border-white/10 pt-3 text-xs text-white/35">
+            Estimates only. Final price after a short written scope.
           </p>
         </div>
       )}

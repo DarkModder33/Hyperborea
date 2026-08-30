@@ -1,23 +1,23 @@
 const FAQS = [
   {
     q: 'How fast do you reply?',
-    a: 'Target is within 24 hours with a written scope or next step. Urgent hardware issues can text the line on the contact page.'
+    a: 'Usually within 24 hours with a written scope or next step. For urgent hardware issues, text (609) 412-8878.'
   },
   {
     q: 'Do you take mail-in repairs?',
-    a: 'Yes. Follow the mail-in guide, ship with tracking, and you get a clear outcome before any open-ended spend.'
+    a: 'Yes. Use the Mail-in guide, ship with tracking after we confirm intake, and you get a clear outcome before open-ended charges.'
   },
   {
-    q: 'What does a written scope include?',
-    a: 'Deliverables, price range or fixed fee, timeline, and what is out of scope. Work does not expand without agreement.'
+    q: 'What is a written scope?',
+    a: 'A short agreement of deliverables, price or range, and timeline — before you pay and before work expands.'
   },
   {
-    q: 'Is Care required after a website build?',
-    a: 'No. Care is optional at $250/mo for priority fixes and light upkeep. One-off projects can end at handoff.'
+    q: 'Is the Care plan required?',
+    a: 'No. Care is optional at $250/month for priority fixes on live sites. One-off projects can end at handoff.'
   },
   {
-    q: 'Are market tools on this site a broker?',
-    a: 'No. Simulation and research only — not brokerage, not live order routing, not investment advice.'
+    q: 'Is market content on this site investment advice?',
+    a: 'No. Simulation and research only — not a broker and not live order placement.'
   }
 ];
 
@@ -33,20 +33,18 @@ export default function Faq() {
   };
 
   return (
-    <section className="mx-auto max-w-6xl px-5 py-20">
+    <section className="mx-auto max-w-6xl px-5 py-16">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <p className="mono text-xs tracking-[0.2em] text-[#00ff9f]">FAQ</p>
-      <h2 className="mt-3 text-3xl font-semibold tracking-tight">Straight answers before you book.</h2>
-      <div className="mt-10 space-y-3">
+      <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Common questions</h2>
+      <div className="mt-8 space-y-3">
         {FAQS.map((f) => (
-          <details
-            key={f.q}
-            className="group glass rounded-2xl px-5 py-4 open:border-[#00ff9f]/25"
-          >
-            <summary className="cursor-pointer list-none font-medium text-white marker:content-none">
+          <details key={f.q} className="group glass rounded-2xl px-5 py-4">
+            <summary className="cursor-pointer list-none font-medium text-white">
               <span className="flex items-center justify-between gap-4">
                 {f.q}
-                <span className="text-[#00ff9f] transition group-open:rotate-45">+</span>
+                <span className="text-[#00ff9f] transition group-open:rotate-45" aria-hidden>
+                  +
+                </span>
               </span>
             </summary>
             <p className="mt-3 text-sm leading-relaxed text-white/55">{f.a}</p>

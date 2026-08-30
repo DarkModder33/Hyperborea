@@ -4,9 +4,7 @@ import AnalyticsProvider from './components/AnalyticsProvider';
 import StickyCta from './components/StickyCta';
 import Plausible from './components/Plausible';
 import JsonLd from './components/JsonLd';
-import CursorGlow from './components/CursorGlow';
 import CommandPalette from './components/CommandPalette';
-import BootSequence from './components/BootSequence';
 import { SITE_NAME, SITE_URL, ogImageFor } from '../lib/seo';
 
 const defaultOg = ogImageFor('/');
@@ -14,19 +12,17 @@ const defaultOg = ogImageFor('/');
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'TradeHax | Tech repairs, custom builds & music lessons',
+    default: 'TradeHax | Tech repairs, websites & remote lessons',
     template: '%s | TradeHax'
   },
   description:
-    'Founder-led tech execution: device repairs $50–200, custom development from $299, remote guitar lessons, Care retainers $250/mo. Instant estimates. Greater Philadelphia + worldwide.',
+    'Get an instant estimate for phone and laptop repair ($50–200), websites from $299, Care retainers $250/mo, and remote guitar lessons. Greater Philadelphia and remote worldwide.',
   keywords: [
     'phone repair Philadelphia',
     'mail-in phone repair',
     'data recovery',
     'custom website development',
-    'Next.js developer',
     'remote guitar lessons',
-    'IT support Greater Philadelphia',
     'TradeHax'
   ],
   authors: [{ name: "Michael O'Flaherty", url: SITE_URL }],
@@ -47,8 +43,8 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: SITE_URL },
   openGraph: {
-    title: 'TradeHax | One expert. Full stack.',
-    description: 'Instant estimates. Scoped before invoice. Remote + mail-in. Repairs, builds, retainers.',
+    title: 'TradeHax | Repairs, websites, lessons',
+    description: 'Instant estimates. Clear scope. Remote and mail-in.',
     url: SITE_URL,
     siteName: SITE_NAME,
     locale: 'en_US',
@@ -58,7 +54,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'TradeHax | Tech repairs & custom builds',
-    description: 'Instant estimates. Clear scope. Founder-led execution.',
+    description: 'Instant estimates. Clear scope.',
     images: [defaultOg]
   },
   formatDetection: { email: false, address: false, telephone: false }
@@ -74,8 +70,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="relative min-h-screen antialiased pb-20 md:pb-0">
         <div className="aurora" aria-hidden />
         <div className="noise" aria-hidden />
-        <CursorGlow />
-        <BootSequence />
         <div className="relative z-10">
           <AnalyticsProvider />
           {children}
