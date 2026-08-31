@@ -1,67 +1,174 @@
 'use client';
 
-import { useEffect, useState, FormEvent, Suspense } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { ArrowLeft, ArrowRight, Check, Wrench, Code2, Shield, Sparkles, Music, LineChart } from 'lucide-react';
 import { site } from '../../lib/site';
 import { readEstimateIntent, track } from '../../lib/analytics';
 
-const serviceOptions = [
-  'Website system',
-  'Device / software repair',
-  'Custom automation',
-  'Care retainer',
-  'Intelligence waitlist',
-  'Other'
-];
+const SERVICES = [
+  {
+    id: 'Device / software repair',
+    label: 'Device repair',
+    blurb: 'Screen, water, data, battery, unbrick',
+    icon: Wrench
+  },
+  {
+    id: 'Website system',
+    label: 'Website or app',
+    blurb: 'Landing pages to full systems',
+    icon: Code2
+  },
+  {
+    id: 'Care retainer',
+    label: 'Care plan',
+    blurb: '$250/mo priority fixes',
+    icon: Shield
+  },
+  {
+    id: 'Custom automation',
+    label: 'Automation',
+    blurb: 'Scripts, tools, workflows',
+    icon: Sparkles
+  },
+  {
+    id: 'Other',
+    label: 'Guitar / other',
+    blurb: 'Lessons or something else',
+    icon: Music
+  },
+  {
+    id: 'Intelligence waitlist',
+    label: 'Intelligence',
+    blurb: 'Research waitlist only',
+    icon: LineChart
+  }
+] as const;
 
-const budgetOptions = [
-  'Under $200',
-  '$200–$500',
-  '$500–$1,500',
-  '$1,500+',
-  'Not sure yet'
-];
+const BUDGETS = ['Under $200', '$200–$500', '$500–$1,500', '$1,500+', 'Not sure yet'];
+
+const STEPS = ['Service', 'Details', 'Contact', 'Review'] as const;
+
+type FormState = {
+  service: string;
+  message: string;
+  budget: string;
+  name: string;
+  email: string;
+  phone: string;
+};
 
 function QuoteFormInner() {
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
-  const [prefillService, setPrefillService] = useState('');
-  const [prefillMessage, setPrefillMessage] = useState('');
+  const [step, setStep] = useState(0);
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
+  const [error, setError] = useState('');
   const [estimateNote, setEstimateNote] = useState<string | null>(null);
+  const [form, setForm] = useState<FormState>({
+    service: '',
+    message: '',
+    budget: '',
+    name: '',
+    email: '',
+    phone: ''
+  });
 
   useEffect(() => {
     const q = searchParams.get('q') || '';
     const service = searchParams.get('service') || '';
     const intent = readEstimateIntent();
 
-    if (service) setPrefillService(service);
-    else if (intent?.title) {
-      if (intent.icon === 'repair') setPrefillService('Device / software repair');
-      else if (intent.icon === 'dev') setPrefillService('Website system');
-      else setPrefillService('Other');
-    }
+    let nextService = service;
+    if (!nextService && intent?.icon === 'repair') nextService = 'Device / software repair';
+    if (!nextService && intent?.icon === 'dev') nextService = 'Website system';
+    if (!nextService && intent?.title?.toLowerCase().includes('care')) nextService = 'Care retainer';
 
     const parts: string[] = [];
     if (q) parts.push(q);
     else if (intent?.query) parts.push(intent.query);
     if (intent?.range) {
-      parts.push(`\n[Instant estimate shown: ${intent.title} — ${intent.range}]`);
+      parts.push(`\n[Instant estimate: ${intent.title} — ${intent.range}]`);
       setEstimateNote(`${intent.title} · ${intent.range}`);
     }
-    if (parts.length) setPrefillMessage(parts.join('').trim());
+
+    setForm((f) => ({
+      ...f,
+      service: nextService || f.service,
+      message: parts.length ? parts.join('').trim() : f.message
+    }));
+
+    // If service already known from estimate/path, start on details
+    if (nextService) setStep(1);
   }, [searchParams]);
 
-  async function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setStatus('sending');
-    const form = e.currentTarget;
-    const data = new FormData(form);
+  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
+    setForm((f) => ({ ...f, [key]: value }));
+    setError('');
+  }
 
+  function validateStep(s: number): boolean {
+    if (s === 0 && !form.service) {
+      setError('Choose a service to continue.');
+      return false;
+    }
+    if (s === 1 && form.message.trim().length < 8) {
+      setError('Add a short description (at least a sentence).');
+      return false;
+    }
+    if (s === 2) {
+      if (!form.name.trim()) {
+        setError('Name is required.');
+        return false;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+        setError('Enter a valid email.');
+        return false;
+      }
+    }
+    setError('');
+    return true;
+  }
+
+  function next() {
+    if (!validateStep(step)) return;
+    track('cta_click', { placement: 'quote_wizard_next', step: STEPS[step] });
+    setStep((x) => Math.min(x + 1, STEPS.length - 1));
+  }
+
+  function back() {
+    setError('');
+    setStep((x) => Math.max(x - 1, 0));
+  }
+
+  async function submit() {
+    if (!validateStep(2)) {
+      setStep(2);
+      return;
+    }
+    setStatus('sending');
     track('quote_submit', {
-      service: String(data.get('service') || ''),
-      budget: String(data.get('budget') || ''),
-      has_estimate: Boolean(estimateNote)
+      service: form.service,
+      budget: form.budget || 'unset',
+      has_estimate: Boolean(estimateNote),
+      wizard: true
     });
+
+    const data = new FormData();
+    data.set('_subject', 'TradeHax quote request');
+    data.set('_template', 'table');
+    data.set('_captcha', 'false');
+    data.set('name', form.name.trim());
+    data.set('email', form.email.trim());
+    data.set('phone', form.phone.trim());
+    data.set('service', form.service);
+    data.set('budget', form.budget || 'Not specified');
+    data.set(
+      'message',
+      [
+        form.message.trim(),
+        estimateNote ? `\nEstimate shown: ${estimateNote}` : ''
+      ].join('')
+    );
 
     try {
       const res = await fetch(`https://formsubmit.co/ajax/${site.email}`, {
@@ -71,25 +178,18 @@ function QuoteFormInner() {
       });
       if (!res.ok) throw new Error('submit failed');
       setStatus('sent');
-      form.reset();
     } catch {
-      const name = String(data.get('name') || '');
-      const email = String(data.get('email') || '');
-      const phone = String(data.get('phone') || '');
-      const service = String(data.get('service') || '');
-      const budget = String(data.get('budget') || '');
-      const message = String(data.get('message') || '');
       const body = [
-        `Name: ${name}`,
-        `Email: ${email}`,
-        `Phone: ${phone}`,
-        `Service: ${service}`,
-        `Budget: ${budget}`,
+        `Name: ${form.name}`,
+        `Email: ${form.email}`,
+        `Phone: ${form.phone}`,
+        `Service: ${form.service}`,
+        `Budget: ${form.budget || 'Not specified'}`,
         '',
-        message
+        form.message
       ].join('\n');
       window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(
-        `Quote request — ${service || 'TradeHax'}`
+        `Quote request — ${form.service || 'TradeHax'}`
       )}&body=${encodeURIComponent(body)}`;
       setStatus('sent');
     }
@@ -98,126 +198,256 @@ function QuoteFormInner() {
   if (status === 'sent') {
     return (
       <div className="glass rounded-3xl p-8 text-center">
-        <p className="text-xl font-semibold text-[#00ff9f]">Request received.</p>
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#00ff9f]/15 text-[#00ff9f]">
+          <Check className="h-6 w-6" />
+        </div>
+        <p className="mt-4 text-xl font-semibold text-white">Request received</p>
         <p className="mt-3 text-sm text-white/55">
-          I reply within 24 hours with a written scope. Urgent? Text {site.phoneDisplay}.
+          You get a written scope within about 24 hours. Urgent hardware? Text {site.phoneDisplay}.
         </p>
-        <button type="button" onClick={() => setStatus('idle')} className="btn-ghost mt-6">
-          Send another
+        <button
+          type="button"
+          onClick={() => {
+            setStatus('idle');
+            setStep(0);
+            setForm({ service: '', message: '', budget: '', name: '', email: '', phone: '' });
+            setEstimateNote(null);
+          }}
+          className="btn-ghost mt-6"
+        >
+          Start another request
         </button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} className="glass space-y-5 rounded-3xl p-6 sm:p-8">
-      <input type="hidden" name="_subject" value="TradeHax quote request" />
-      <input type="hidden" name="_template" value="table" />
-      <input type="hidden" name="_captcha" value="false" />
-      <input type="text" name="_honey" className="hidden" tabIndex={-1} autoComplete="off" />
+    <div className="glass rounded-3xl p-5 sm:p-8">
+      {/* Progress */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between gap-2">
+          {STEPS.map((label, i) => (
+            <button
+              key={label}
+              type="button"
+              onClick={() => {
+                if (i < step) setStep(i);
+              }}
+              className="flex flex-1 flex-col items-center gap-2"
+              aria-current={i === step ? 'step' : undefined}
+            >
+              <span
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold ${
+                  i < step
+                    ? 'bg-[#00ff9f] text-black'
+                    : i === step
+                      ? 'border-2 border-[#00ff9f] text-[#00ff9f]'
+                      : 'border border-white/15 text-white/35'
+                }`}
+              >
+                {i < step ? <Check className="h-4 w-4" /> : i + 1}
+              </span>
+              <span className={`hidden text-[10px] uppercase tracking-wider sm:block ${i === step ? 'text-white' : 'text-white/35'}`}>
+                {label}
+              </span>
+            </button>
+          ))}
+        </div>
+        <div className="mt-4 h-1 overflow-hidden rounded-full bg-white/10">
+          <div
+            className="h-full rounded-full bg-[#00ff9f] transition-all duration-300"
+            style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
+          />
+        </div>
+      </div>
 
       {estimateNote && (
-        <div className="rounded-xl border border-[#00ff9f]/25 bg-[#00ff9f]/5 px-4 py-3 text-sm text-[#00ff9f]">
-          Carrying estimate: <strong>{estimateNote}</strong>
+        <div className="mb-5 rounded-xl border border-[#00ff9f]/25 bg-[#00ff9f]/5 px-4 py-3 text-sm text-[#00ff9f]">
+          From your estimate: <strong>{estimateNote}</strong>
         </div>
       )}
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <label className="block text-sm">
-          <span className="text-white/45">Name</span>
-          <input
-            required
-            name="name"
-            className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
-            placeholder="Your name"
-          />
-        </label>
-        <label className="block text-sm">
-          <span className="text-white/45">Email</span>
-          <input
-            required
-            type="email"
-            name="email"
-            className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
-            placeholder="you@domain.com"
-          />
-        </label>
+      {/* Step 0 — Service */}
+      {step === 0 && (
+        <div>
+          <h2 className="text-lg font-semibold">What do you need?</h2>
+          <p className="mt-1 text-sm text-white/45">Pick one. You can change it later.</p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {SERVICES.map((s) => {
+              const selected = form.service === s.id;
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => update('service', s.id)}
+                  className={`rounded-2xl border p-4 text-left transition ${
+                    selected
+                      ? 'border-[#00ff9f]/50 bg-[#00ff9f]/10'
+                      : 'border-white/10 bg-black/30 hover:border-white/25'
+                  }`}
+                >
+                  <s.icon className={`h-5 w-5 ${selected ? 'text-[#00ff9f]' : 'text-white/40'}`} />
+                  <p className="mt-3 font-medium text-white">{s.label}</p>
+                  <p className="mt-1 text-xs text-white/45">{s.blurb}</p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Step 1 — Details */}
+      {step === 1 && (
+        <div className="space-y-5">
+          <div>
+            <h2 className="text-lg font-semibold">Describe the job</h2>
+            <p className="mt-1 text-sm text-white/45">Device model, site URL, deadline, remote vs mail-in — whatever helps.</p>
+          </div>
+          <label className="block text-sm">
+            <span className="text-white/45">Details</span>
+            <textarea
+              rows={5}
+              value={form.message}
+              onChange={(e) => update('message', e.target.value)}
+              className="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
+              placeholder="What’s broken or what should we build?"
+            />
+          </label>
+          <fieldset>
+            <legend className="text-sm text-white/45">Budget (optional)</legend>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {BUDGETS.map((b) => (
+                <button
+                  key={b}
+                  type="button"
+                  onClick={() => update('budget', b)}
+                  className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                    form.budget === b
+                      ? 'border-[#00ff9f]/50 bg-[#00ff9f]/10 text-[#00ff9f]'
+                      : 'border-white/10 text-white/55 hover:border-white/25'
+                  }`}
+                >
+                  {b}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+        </div>
+      )}
+
+      {/* Step 2 — Contact */}
+      {step === 2 && (
+        <div className="space-y-5">
+          <div>
+            <h2 className="text-lg font-semibold">How do we reach you?</h2>
+            <p className="mt-1 text-sm text-white/45">Used only to reply with a written scope.</p>
+          </div>
+          <label className="block text-sm">
+            <span className="text-white/45">Name</span>
+            <input
+              value={form.name}
+              onChange={(e) => update('name', e.target.value)}
+              className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
+              placeholder="Your name"
+              autoComplete="name"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="text-white/45">Email</span>
+            <input
+              type="email"
+              value={form.email}
+              onChange={(e) => update('email', e.target.value)}
+              className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
+              placeholder="you@domain.com"
+              autoComplete="email"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="text-white/45">Phone / text (optional)</span>
+            <input
+              type="tel"
+              value={form.phone}
+              onChange={(e) => update('phone', e.target.value)}
+              className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
+              placeholder={site.phoneDisplay}
+              autoComplete="tel"
+            />
+          </label>
+        </div>
+      )}
+
+      {/* Step 3 — Review */}
+      {step === 3 && (
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">Review & send</h2>
+          <dl className="space-y-3 rounded-2xl border border-white/10 bg-black/30 p-4 text-sm">
+            <div className="flex justify-between gap-4">
+              <dt className="text-white/40">Service</dt>
+              <dd className="text-right text-white">{form.service}</dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-white/40">Budget</dt>
+              <dd className="text-right text-white">{form.budget || 'Not specified'}</dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-white/40">Name</dt>
+              <dd className="text-right text-white">{form.name}</dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-white/40">Email</dt>
+              <dd className="text-right text-white">{form.email}</dd>
+            </div>
+            {form.phone && (
+              <div className="flex justify-between gap-4">
+                <dt className="text-white/40">Phone</dt>
+                <dd className="text-right text-white">{form.phone}</dd>
+              </div>
+            )}
+            <div className="border-t border-white/10 pt-3">
+              <dt className="text-white/40">Details</dt>
+              <dd className="mt-2 whitespace-pre-wrap text-white/80">{form.message}</dd>
+            </div>
+          </dl>
+          <p className="text-xs text-white/35">
+            Sends to {site.email}. No mailing list. Written scope before any invoice.
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <p className="mt-4 text-sm text-rose-400" role="alert">
+          {error}
+        </p>
+      )}
+
+      {/* Nav buttons */}
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+        {step > 0 ? (
+          <button type="button" onClick={back} className="btn-ghost">
+            <ArrowLeft className="h-4 w-4" /> Back
+          </button>
+        ) : (
+          <span />
+        )}
+
+        {step < STEPS.length - 1 ? (
+          <button type="button" onClick={next} className="btn-primary">
+            Continue <ArrowRight className="h-4 w-4" />
+          </button>
+        ) : (
+          <button type="button" onClick={submit} disabled={status === 'sending'} className="btn-primary">
+            {status === 'sending' ? 'Sending…' : 'Request written scope'}
+          </button>
+        )}
       </div>
-
-      <div className="grid gap-5 sm:grid-cols-2">
-        <label className="block text-sm">
-          <span className="text-white/45">Phone / text</span>
-          <input
-            name="phone"
-            className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
-            placeholder={site.phoneDisplay}
-          />
-        </label>
-        <label className="block text-sm">
-          <span className="text-white/45">Service</span>
-          <select
-            required
-            name="service"
-            value={prefillService}
-            onChange={(e) => setPrefillService(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
-          >
-            <option value="" disabled>
-              Select…
-            </option>
-            {serviceOptions.map((o) => (
-              <option key={o} value={o}>
-                {o}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-
-      <label className="block text-sm">
-        <span className="text-white/45">Budget range</span>
-        <select
-          name="budget"
-          defaultValue=""
-          className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
-        >
-          <option value="" disabled>
-            Optional — helps prioritise
-          </option>
-          {budgetOptions.map((o) => (
-            <option key={o} value={o}>
-              {o}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <label className="block text-sm">
-        <span className="text-white/45">What is broken or needed?</span>
-        <textarea
-          required
-          name="message"
-          rows={5}
-          value={prefillMessage}
-          onChange={(e) => setPrefillMessage(e.target.value)}
-          className="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
-          placeholder="Device / site URL, deadline, remote vs on-site…"
-        />
-      </label>
-
-      <button type="submit" disabled={status === 'sending'} className="btn-primary w-full sm:w-auto">
-        {status === 'sending' ? 'Sending…' : 'Request written scope'}
-      </button>
-      <p className="text-xs text-white/35">
-        Submits to {site.email}. No spam list. Written scope before any invoice. Typical reply under 24h.
-      </p>
-    </form>
+    </div>
   );
 }
 
 export default function QuoteForm() {
   return (
-    <Suspense fallback={<div className="glass h-96 animate-pulse rounded-3xl" />}>
+    <Suspense fallback={<div className="glass h-96 animate-pulse rounded-3xl" aria-hidden />}>
       <QuoteFormInner />
     </Suspense>
   );
