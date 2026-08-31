@@ -5,6 +5,14 @@ import { useSearchParams } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Check, Wrench, Code2, Shield, Sparkles, Music, LineChart } from 'lucide-react';
 import { site } from '../../lib/site';
 import { readEstimateIntent, track } from '../../lib/analytics';
+import {
+  type QuoteFormData,
+  type FieldErrors,
+  validateStep,
+  validateReview,
+  firstErrorMessage,
+  hasErrors
+} from '../../lib/quoteValidation';
 
 const SERVICES = [
   {
@@ -49,22 +57,19 @@ const BUDGETS = ['Under $200', '$200–$500', '$500–$1,500', '$1,500+', 'Not s
 
 const STEPS = ['Service', 'Details', 'Contact', 'Review'] as const;
 
-type FormState = {
-  service: string;
-  message: string;
-  budget: string;
-  name: string;
-  email: string;
-  phone: string;
-};
+const inputBase =
+  'mt-2 w-full rounded-xl border bg-black/40 px-4 py-3 text-white outline-none transition';
+const inputOk = 'border-white/10 focus:border-[#00ff9f]/50';
+const inputBad = 'border-rose-400/60 focus:border-rose-400';
 
 function QuoteFormInner() {
   const searchParams = useSearchParams();
   const [step, setStep] = useState(0);
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [attempted, setAttempted] = useState(false);
   const [estimateNote, setEstimateNote] = useState<string | null>(null);
-  const [form, setForm] = useState<FormState>({
+  const [form, setForm] = useState<QuoteFormData>({
     service: '',
     message: '',
     budget: '',
@@ -97,54 +102,60 @@ function QuoteFormInner() {
       message: parts.length ? parts.join('').trim() : f.message
     }));
 
-    // If service already known from estimate/path, start on details
     if (nextService) setStep(1);
   }, [searchParams]);
 
-  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
+  function update<K extends keyof QuoteFormData>(key: K, value: QuoteFormData[K]) {
     setForm((f) => ({ ...f, [key]: value }));
-    setError('');
+    // Clear field error as user edits
+    setErrors((e) => {
+      if (!e[key]) return e;
+      const next = { ...e };
+      delete next[key];
+      return next;
+    });
   }
 
-  function validateStep(s: number): boolean {
-    if (s === 0 && !form.service) {
-      setError('Choose a service to continue.');
-      return false;
-    }
-    if (s === 1 && form.message.trim().length < 8) {
-      setError('Add a short description (at least a sentence).');
-      return false;
-    }
-    if (s === 2) {
-      if (!form.name.trim()) {
-        setError('Name is required.');
-        return false;
-      }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-        setError('Enter a valid email.');
-        return false;
-      }
-    }
-    setError('');
-    return true;
+  function runValidate(s: number): boolean {
+    const nextErrors = validateStep(s, form);
+    setErrors(nextErrors);
+    setAttempted(true);
+    return !hasErrors(nextErrors);
   }
 
   function next() {
-    if (!validateStep(step)) return;
+    if (!runValidate(step)) return;
     track('cta_click', { placement: 'quote_wizard_next', step: STEPS[step] });
+    setAttempted(false);
     setStep((x) => Math.min(x + 1, STEPS.length - 1));
   }
 
   function back() {
-    setError('');
+    setErrors({});
+    setAttempted(false);
     setStep((x) => Math.max(x - 1, 0));
   }
 
+  /** Only allow jumping to earlier completed steps */
+  function goToStep(i: number) {
+    if (i >= step) return;
+    setErrors({});
+    setAttempted(false);
+    setStep(i);
+  }
+
   async function submit() {
-    if (!validateStep(2)) {
-      setStep(2);
+    const all = validateReview(form);
+    setErrors(all);
+    setAttempted(true);
+    if (hasErrors(all)) {
+      // Jump to first step that fails
+      if (all.service) setStep(0);
+      else if (all.message) setStep(1);
+      else if (all.name || all.email || all.phone) setStep(2);
       return;
     }
+
     setStatus('sending');
     track('quote_submit', {
       service: form.service,
@@ -164,10 +175,7 @@ function QuoteFormInner() {
     data.set('budget', form.budget || 'Not specified');
     data.set(
       'message',
-      [
-        form.message.trim(),
-        estimateNote ? `\nEstimate shown: ${estimateNote}` : ''
-      ].join('')
+      [form.message.trim(), estimateNote ? `\nEstimate shown: ${estimateNote}` : ''].join('')
     );
 
     try {
@@ -212,6 +220,8 @@ function QuoteFormInner() {
             setStep(0);
             setForm({ service: '', message: '', budget: '', name: '', email: '', phone: '' });
             setEstimateNote(null);
+            setErrors({});
+            setAttempted(false);
           }}
           className="btn-ghost mt-6"
         >
@@ -221,18 +231,17 @@ function QuoteFormInner() {
     );
   }
 
+  const banner = attempted ? firstErrorMessage(errors) : '';
+
   return (
     <div className="glass rounded-3xl p-5 sm:p-8">
-      {/* Progress */}
       <div className="mb-8">
         <div className="flex items-center justify-between gap-2">
           {STEPS.map((label, i) => (
             <button
               key={label}
               type="button"
-              onClick={() => {
-                if (i < step) setStep(i);
-              }}
+              onClick={() => goToStep(i)}
               className="flex flex-1 flex-col items-center gap-2"
               aria-current={i === step ? 'step' : undefined}
             >
@@ -247,7 +256,11 @@ function QuoteFormInner() {
               >
                 {i < step ? <Check className="h-4 w-4" /> : i + 1}
               </span>
-              <span className={`hidden text-[10px] uppercase tracking-wider sm:block ${i === step ? 'text-white' : 'text-white/35'}`}>
+              <span
+                className={`hidden text-[10px] uppercase tracking-wider sm:block ${
+                  i === step ? 'text-white' : 'text-white/35'
+                }`}
+              >
                 {label}
               </span>
             </button>
@@ -267,23 +280,31 @@ function QuoteFormInner() {
         </div>
       )}
 
-      {/* Step 0 — Service */}
       {step === 0 && (
         <div>
           <h2 className="text-lg font-semibold">What do you need?</h2>
           <p className="mt-1 text-sm text-white/45">Pick one. You can change it later.</p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <div
+            className="mt-5 grid gap-3 sm:grid-cols-2"
+            role="radiogroup"
+            aria-label="Service"
+            aria-invalid={Boolean(errors.service)}
+          >
             {SERVICES.map((s) => {
               const selected = form.service === s.id;
               return (
                 <button
                   key={s.id}
                   type="button"
+                  role="radio"
+                  aria-checked={selected}
                   onClick={() => update('service', s.id)}
                   className={`rounded-2xl border p-4 text-left transition ${
                     selected
                       ? 'border-[#00ff9f]/50 bg-[#00ff9f]/10'
-                      : 'border-white/10 bg-black/30 hover:border-white/25'
+                      : errors.service
+                        ? 'border-rose-400/40 bg-black/30'
+                        : 'border-white/10 bg-black/30 hover:border-white/25'
                   }`}
                 >
                   <s.icon className={`h-5 w-5 ${selected ? 'text-[#00ff9f]' : 'text-white/40'}`} />
@@ -293,15 +314,21 @@ function QuoteFormInner() {
               );
             })}
           </div>
+          {errors.service && (
+            <p className="mt-3 text-sm text-rose-400" role="alert">
+              {errors.service}
+            </p>
+          )}
         </div>
       )}
 
-      {/* Step 1 — Details */}
       {step === 1 && (
         <div className="space-y-5">
           <div>
             <h2 className="text-lg font-semibold">Describe the job</h2>
-            <p className="mt-1 text-sm text-white/45">Device model, site URL, deadline, remote vs mail-in — whatever helps.</p>
+            <p className="mt-1 text-sm text-white/45">
+              Device model, site URL, deadline, remote vs mail-in — whatever helps.
+            </p>
           </div>
           <label className="block text-sm">
             <span className="text-white/45">Details</span>
@@ -309,9 +336,16 @@ function QuoteFormInner() {
               rows={5}
               value={form.message}
               onChange={(e) => update('message', e.target.value)}
-              className="mt-2 w-full resize-y rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
+              aria-invalid={Boolean(errors.message)}
+              aria-describedby={errors.message ? 'err-message' : undefined}
+              className={`${inputBase} resize-y ${errors.message ? inputBad : inputOk}`}
               placeholder="What’s broken or what should we build?"
             />
+            {errors.message && (
+              <p id="err-message" className="mt-2 text-sm text-rose-400" role="alert">
+                {errors.message}
+              </p>
+            )}
           </label>
           <fieldset>
             <legend className="text-sm text-white/45">Budget (optional)</legend>
@@ -335,7 +369,6 @@ function QuoteFormInner() {
         </div>
       )}
 
-      {/* Step 2 — Contact */}
       {step === 2 && (
         <div className="space-y-5">
           <div>
@@ -347,10 +380,17 @@ function QuoteFormInner() {
             <input
               value={form.name}
               onChange={(e) => update('name', e.target.value)}
-              className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
+              aria-invalid={Boolean(errors.name)}
+              aria-describedby={errors.name ? 'err-name' : undefined}
+              className={`${inputBase} ${errors.name ? inputBad : inputOk}`}
               placeholder="Your name"
               autoComplete="name"
             />
+            {errors.name && (
+              <p id="err-name" className="mt-2 text-sm text-rose-400" role="alert">
+                {errors.name}
+              </p>
+            )}
           </label>
           <label className="block text-sm">
             <span className="text-white/45">Email</span>
@@ -358,10 +398,17 @@ function QuoteFormInner() {
               type="email"
               value={form.email}
               onChange={(e) => update('email', e.target.value)}
-              className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
+              aria-invalid={Boolean(errors.email)}
+              aria-describedby={errors.email ? 'err-email' : undefined}
+              className={`${inputBase} ${errors.email ? inputBad : inputOk}`}
               placeholder="you@domain.com"
               autoComplete="email"
             />
+            {errors.email && (
+              <p id="err-email" className="mt-2 text-sm text-rose-400" role="alert">
+                {errors.email}
+              </p>
+            )}
           </label>
           <label className="block text-sm">
             <span className="text-white/45">Phone / text (optional)</span>
@@ -369,15 +416,21 @@ function QuoteFormInner() {
               type="tel"
               value={form.phone}
               onChange={(e) => update('phone', e.target.value)}
-              className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none focus:border-[#00ff9f]/50"
+              aria-invalid={Boolean(errors.phone)}
+              aria-describedby={errors.phone ? 'err-phone' : undefined}
+              className={`${inputBase} ${errors.phone ? inputBad : inputOk}`}
               placeholder={site.phoneDisplay}
               autoComplete="tel"
             />
+            {errors.phone && (
+              <p id="err-phone" className="mt-2 text-sm text-rose-400" role="alert">
+                {errors.phone}
+              </p>
+            )}
           </label>
         </div>
       )}
 
-      {/* Step 3 — Review */}
       {step === 3 && (
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Review & send</h2>
@@ -415,13 +468,12 @@ function QuoteFormInner() {
         </div>
       )}
 
-      {error && (
+      {banner && step === 3 && (
         <p className="mt-4 text-sm text-rose-400" role="alert">
-          {error}
+          {banner}
         </p>
       )}
 
-      {/* Nav buttons */}
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
         {step > 0 ? (
           <button type="button" onClick={back} className="btn-ghost">
