@@ -22,8 +22,7 @@ export type QuoteFormData = {
 
 export type FieldErrors = Partial<Record<keyof QuoteFormData, string>>;
 
-const EMAIL_RE = /^[^\\]\s@]+@[^\\s@]+\.[^\\s@]+$/;
-// Allow common formats: (609) 412-8878, 609-412-8878, +1 609..., digits only
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]{6,18}$/;
 
 export function isAllowedService(service: string): service is ServiceId {
@@ -84,7 +83,7 @@ export function validateContact(data: QuoteFormData): FieldErrors {
   return errors;
 }
 
-/** Step 3 — everything required for submit */
+/** Step 3 — full form before submit */
 export function validateReview(data: QuoteFormData): FieldErrors {
   return {
     ...validateService(data),
@@ -108,7 +107,6 @@ export function validateStep(step: number, data: QuoteFormData): FieldErrors {
   }
 }
 
-/** First error message for banner (stable field order) */
 export function firstErrorMessage(errors: FieldErrors): string {
   const order: (keyof QuoteFormData)[] = ['service', 'message', 'budget', 'name', 'email', 'phone'];
   for (const key of order) {
