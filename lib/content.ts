@@ -73,6 +73,45 @@ export const insights: Insight[] = [
       'You leave each session with notes — not a vague “keep practicing.”',
       'Book from the contact form with “guitar lessons” in the message for scheduling.'
     ]
+  },
+  {
+    slug: 'github-student-developer-pack-what-to-claim',
+    title: 'GitHub Student Developer Pack: what to claim first',
+    excerpt: 'Free tools only help if you claim them in the right order and ship one small project.',
+    category: 'STUDENTS',
+    date: '2026-08-28',
+    body: [
+      'The official GitHub Student Developer Pack bundles education access to developer tools, cloud credits, and related perks after you verify student status at education.github.com/pack.',
+      'Claim order that works: verify once, enable GitHub Pro features you need, then cloud credits, then domain or IDE perks if offered — don’t try to activate twenty services in one night.',
+      'Same day goal: one new repo, one tiny live page or script, one README with a contact link. That beats a folder of unused coupons.',
+      'If you want a portfolio or class project turned into a clean public site with a quote path, use the estimate on tradehax.net or request a written scope — free pack for tools, paid help only when you want it done for you.'
+    ]
+  },
+  {
+    slug: 'free-student-portfolio-stack',
+    title: 'Free student portfolio stack (no credit card)',
+    excerpt: 'A live URL beats a PDF. Here’s a free path students can finish in a weekend.',
+    category: 'STUDENTS',
+    date: '2026-08-29',
+    body: [
+      'Minimum stack: GitHub repository, a simple HTML or Next static page, and a free host such as Cloudflare Pages.',
+      'One page is enough: who you are, two projects with links, and how to reach you. Polish later.',
+      'Student domain or design tool deals are optional. Get the URL live first.',
+      'When you need booking, estimate widgets, or ongoing fixes, that’s past the free tier — TradeHax scopes those jobs before any invoice.'
+    ]
+  },
+  {
+    slug: 'class-project-to-portfolio',
+    title: 'Turn a class project into a portfolio piece',
+    excerpt: 'Employers click demos. A little packaging turns homework into proof.',
+    category: 'STUDENTS',
+    date: '2026-08-30',
+    body: [
+      'Add a short README: problem, what you built, how to run it, screenshot or live link.',
+      'Remove secrets and half-finished experiments. One clear story per repo.',
+      'Deploy a demo when you can. A link outperforms a zip file.',
+      'Need a tighter landing page or help finishing the public version? Request a scope on tradehax.net/contact.'
+    ]
   }
 ];
 
