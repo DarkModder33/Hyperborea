@@ -1,167 +1,78 @@
-# TradeHax YouTube Batch 01 — ready to record
+# TradeHax YouTube Batch 01 — GitHub Student Pack + services
 
-Record in OBS or CapCut. One CTA every time: free value → tradehax.net estimate/quote.
+Official pack: https://education.github.com/pack  
+Verify: https://education.github.com/discount_requests/student_application
 
-**Channel framing:** Founder-led tech help — repairs, sites, student tools, honest scopes.
+**CTA every video:** free pack/tools → ship one thing → if you want it done for you: https://tradehax.net/contact
 
-**End screen (every video):**  
-1) Free: links in description  
-2) Need it done for you → https://tradehax.net/contact  
-3) Instant range → https://tradehax.net
-
-**Description footer (paste every time):**
+**Description footer:**
 ```
+GitHub Student Developer Pack (official):
+https://education.github.com/pack
+
 TradeHax — Greater Philadelphia · remote · mail-in
 Instant estimate: https://tradehax.net
-Written scope / quote: https://tradehax.net/contact
-Mail-in guide: https://tradehax.net/mail-in
+Quote / written scope: https://tradehax.net/contact
+Mail-in: https://tradehax.net/mail-in
 Guides: https://tradehax.net/insights
 
-Not a broker. Market content on the site is research/simulation only.
+Pack offers change; always check the official page. Not affiliated with GitHub.
 ```
 
 ---
 
-## Video 1 — GitHub Student Developer Pack (12–15 min)
+## VIDEO 1 (record this first) — full spoken script ~12 min
 
-**Title:** GitHub Student Developer Pack 2026 — What to Claim First (Free)
+**Title:** GitHub Student Developer Pack — Claim These First (2026)
 
-**Hook (0:00–0:30):**  
-If you have a school email, you’re leaving free cloud, domains, and tools on the table. Here’s the exact order I’d claim them so you can ship a real project this month.
+**Thumbnail text:** FREE STUDENT PACK / CLAIM ORDER
 
-**Script beats:**  
-1. What the pack is (official education.github.com/pack)  
-2. Verify student status once  
-3. Claim order: GitHub Pro → cloud credits (DO/Azure/etc.) → domain if offered → IDE/AI tools  
-4. 10-minute “use it” path: new repo → simple site or script → deploy  
-5. CTA: Stuck on setup or want a real portfolio site built? tradehax.net/contact — or free estimate on the homepage  
+### Spoken script
 
-**On-screen:** browser only, pack page, one deploy demo  
+Hey — if you have a school email or can verify as a student, the GitHub Student Developer Pack is one of the highest-value free tool bundles you can get. Official page is education.github.com/pack. I’m going to show a simple claim order so you don’t burn an evening activating twenty random offers.
 
-**Tags:** github student pack, free student developer tools, github education
+First: go to the pack page and complete student verification through GitHub Education. Do that once. Everything else depends on it.
 
----
+Second — core GitHub stuff. The pack includes GitHub Pro while you’re a student, and verified students get GitHub Copilot Student — completions and an allowance of AI credits. If you write code for class, claim Pro and Copilot before random SaaS coupons.
 
-## Video 2 — Free student site in a weekend (12 min)
+Third — a place to put a site on the internet. Look at the domain offers on the pack page: things like a year of a .me from Namecheap, options from Name.com, or a .TECH domain for a year. One free domain is enough. Don’t register five.
 
-**Title:** Free Student Portfolio Site in a Weekend (No Credit Card)
+Fourth — cloud credits when you’re ready to deploy something real. Microsoft Azure for Students is commonly listed — free services plus credit for ages 18+, no credit card on their student path. Heroku has listed monthly credit for a stretch of months. Use cloud when you have an app to run; skip it if you only need a static portfolio.
 
-**Hook:**  
-Employers don’t read résumés as carefully as they click a link. Here’s a free stack to get a live URL.
+Fifth — productivity: Notion’s education-style plan shows up in the pack ecosystem, and Microsoft 365 has student offers tied in. Useful for notes and group work — still secondary to Pro, Copilot, and one live URL.
 
-**Beats:**  
-1. Stack: GitHub + Cloudflare Pages or similar free host  
-2. One page: name, projects, contact  
-3. Custom domain later (student deals)  
-4. When free ends and you want conversion/booking → that’s billable work  
-5. CTA: tradehax.net — “Need a landing page from $299, scoped first”
+GitHub also groups “Experiences” — curated paths like Intro to Copilot, Intro to GitHub, Intro to Web Dev, mobile, data science. Treat those as learning tracks, not more accounts to open tonight.
 
----
+Same-day goal: verification done, Pro and Copilot on, one domain or one static site host decided, one repo with a README and a public page. That beats a screenshot folder of unclaimed perks.
 
-## Video 3 — Mail-in phone repair checklist (8–10 min)
+If you want help turning that into a clean portfolio or class-project site with a real contact path, I do scoped builds at tradehax.net — instant estimate on the homepage, written scope before any invoice. Link below. Pack is free from GitHub; paid help is optional.
 
-**Title:** Mail-In Phone Repair Checklist (Don’t Ship Blind)
+That’s it — education.github.com/pack, claim in that order, ship one small thing this week.
 
-**Hook:**  
-Shipping a dead phone without a plan is how you lose time and money. Here’s the checklist I give people first.
-
-**Beats:**  
-1. Backup what you can  
-2. SIM/SD out  
-3. One-sentence failure + deadline  
-4. Tracking + written outcome before open-ended spend  
-5. CTA: https://tradehax.net/mail-in + quote form for intake
+### Cards / end screen
+- Pack: education.github.com/pack
+- Estimate: tradehax.net
+- Contact: tradehax.net/contact
 
 ---
 
-## Video 4 — What $299 website includes (10 min)
+## More titles in this series
 
-**Title:** What a $299 Website Actually Includes (Honest Scope)
+2. Free .me / .TECH domain from the Student Pack → point it at a portfolio  
+3. GitHub Copilot Student — what it’s good for in class projects  
+4. Azure for Students — deploy a tiny API without a credit card panic  
+5. Intro to Web Dev Experience — then host on Pages/Cloudflare  
+6. Mail-in phone repair checklist (TradeHax)  
+7. What a $299 website includes  
+8. Scope before invoice  
+9. Class project → portfolio README  
+10. Walkthrough of tradehax.net quote flow  
 
-**Hook:**  
-Cheap sites fail when nobody defines “done.” Here’s what’s in an entry build vs what costs more.
+## Claim order (on-screen checklist graphic)
 
-**Beats:**  
-Match site insight: landing/conversion focus, mobile, deploy, basic SEO; not full apps  
-CTA: estimate on tradehax.net → written scope
-
----
-
-## Video 5 — Scope before invoice (8 min)
-
-**Title:** Scope Before Invoice — How Freelancers Avoid Disputes
-
-**Beats:**  
-Written deliverables, range, timeline; Care retainer as monthly envelope  
-CTA: contact form on tradehax.net
-
----
-
-## Video 6 — Laptop won’t boot (10–12 min)
-
-**Title:** Laptop Won’t Boot — What to Try Before You Pay for Repair
-
-**Beats:**  
-Safe free checks (power, display, boot menu awareness — no destructive steps)  
-When to stop and get remote/mail-in help  
-CTA: device repair path on tradehax.net
-
----
-
-## Video 7 — Care $250/mo who it’s for (7 min)
-
-**Title:** $250/mo Website Care — Who Actually Needs It
-
-**Beats:**  
-Live revenue sites, priority fixes, not redesigns  
-CTA: /care + quote
-
----
-
-## Video 8 — CIS / class project to portfolio (10 min)
-
-**Title:** Turn a Class Project Into a Portfolio Piece Employers Click
-
-**Beats:**  
-Clean README, live demo link, one paragraph problem→result  
-Optional: you offer polish as paid scope  
-CTA: tradehax.net
-
----
-
-## Video 9 — Remote guitar lessons expectations (8 min)
-
-**Title:** Remote Guitar Lessons — What the First Month Looks Like
-
-**Beats:**  
-Gear, connection, weekly goal, notes after session  
-CTA: contact with “guitar lessons”
-
----
-
-## Video 10 — Your TradeHax site as the demo (12 min)
-
-**Title:** I Built My Business Site to Take Quotes (Walkthrough)
-
-**Beats:**  
-Estimate → multi-step quote → mail-in → insights  
-“This is the standard you buy”  
-CTA: open estimate on tradehax.net
-
----
-
-## Production checklist (copy per video)
-
-- [ ] Title + 3 tags set in Studio  
-- [ ] Description footer pasted  
-- [ ] Cards: Home | Contact | Mail-in  
-- [ ] End screen 5–20s  
-- [ ] Pin comment: estimate link  
-- [ ] Same outline added or linked on /insights when relevant  
-
-## Income path (keep it simple)
-
-1. Free pack / tutorial content → trust  
-2. Estimate + quote wizard → paid repair/build  
-3. Care after launch → recurring  
-4. Later: paid “done-for-you” setup of student tools or portfolio  
+1. Verify at GitHub Education  
+2. GitHub Pro + Copilot Student  
+3. One domain offer (Namecheap .me / Name.com / .TECH — pick one)  
+4. Cloud only when deploying (Azure / Heroku as listed)  
+5. Notion / M365 if you need notes  
+6. Ship one repo + live link  
