@@ -5,10 +5,10 @@ import { Menu, X } from 'lucide-react';
 
 const LINKS = [
   { href: '/services', label: 'Services' },
-  { href: '/care', label: 'Care plan' },
-  { href: '/mail-in', label: 'Mail-in' },
+  { href: '/care', label: 'Care' },
   { href: '/portfolio', label: 'Work' },
   { href: '/insights', label: 'Guides' },
+  { href: '/mail-in', label: 'Mail-in' },
   { href: '/about', label: 'About' }
 ];
 
@@ -37,13 +37,13 @@ export default function Nav() {
               </a>
             ))}
             <a href="/contact" className="btn-primary !px-4 !py-2">
-              Get a quote
+              Request scope
             </a>
           </div>
 
           <div className="flex items-center gap-2 md:hidden">
             <a href="/contact" className="btn-primary !px-3 !py-2 text-xs">
-              Quote
+              Scope
             </a>
             <button
               type="button"
@@ -70,12 +70,8 @@ export default function Nav() {
                   {l.label}
                 </a>
               ))}
-              <a
-                href="/contact"
-                onClick={() => setOpen(false)}
-                className="btn-primary mt-2 justify-center"
-              >
-                Get a quote
+              <a href="/contact" onClick={() => setOpen(false)} className="btn-primary mt-2 justify-center">
+                Request a written scope
               </a>
             </div>
           </div>

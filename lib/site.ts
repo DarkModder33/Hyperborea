@@ -1,11 +1,12 @@
 export const site = {
   name: 'Hyperion',
   brand: 'TradeHax',
-  tagline: 'Execution layer for operators who ship.',
+  tagline: 'Premier execution. Wealth from shipped work.',
   email: 'owner@tradehax.net',
   phoneDisplay: '(609) 412-8878',
   phoneTel: '+16094128878',
   region: 'Greater Philadelphia · Remote worldwide',
+  capacity: 'Taking 3 new build projects this month',
   socials: [
     { label: 'YouTube', href: 'https://www.youtube.com/@tradehaxnet' },
     { label: 'TikTok', href: 'https://www.tiktok.com/@tradehax.net' },
@@ -13,26 +14,65 @@ export const site = {
     { label: 'GitHub', href: 'https://github.com/DarkModder33' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/mcflaherty' }
   ],
+  /** Primary revenue engine */
   services: [
+    {
+      title: 'Growth System (flagship)',
+      price: '$1,500–$5,000',
+      points: ['Conversion site', 'Booking + intake', 'Automation hooks', 'Hand-off under Care']
+    },
     {
       title: 'Website systems',
       price: 'From $499',
-      points: ['Next.js / Cloudflare deploy', 'Mobile-first conversion layout', 'Contact + booking flow']
+      points: ['Mobile-first conversion layout', 'Contact + booking path', 'Cloudflare deploy']
     },
     {
-      title: 'Device & software repair',
-      price: 'From $89',
-      points: ['Phones, PCs, OS recovery', 'Remote triage when possible', 'Local Greater Philadelphia']
-    },
-    {
-      title: 'Custom automation',
+      title: 'Automation & systems',
       price: 'From $299',
-      points: ['Internal tools & scripts', 'Workflow cleanup', 'Scoped before invoice']
+      points: ['Workflow scripts', 'Lead routing', 'Admin time reduction']
     },
     {
-      title: 'Care retainer',
-      price: '$250 / mo',
-      points: ['Priority fixes', 'Uptime checks', 'Small updates included']
+      title: 'Care retainers',
+      price: 'From $250 / mo',
+      points: ['Priority fixes', 'Monitoring', 'Growth tiers available']
+    }
+  ],
+  careTiers: [
+    {
+      id: 'care',
+      name: 'Care',
+      price: '$250/mo',
+      blurb: 'Keep it live and fixed.',
+      includes: [
+        'Priority response on break/fix issues',
+        'Monthly uptime / health check',
+        'Small content updates (fair-use minutes)',
+        'Security and dependency nudges'
+      ]
+    },
+    {
+      id: 'growth',
+      name: 'Growth',
+      price: '$500/mo',
+      blurb: 'Improve it every month.',
+      includes: [
+        'Everything in Care',
+        'Monthly improvement sprint',
+        'Light SEO / conversion tweaks',
+        'Automation adjustments'
+      ]
+    },
+    {
+      id: 'partner',
+      name: 'Partner',
+      price: '$1,000+/mo',
+      blurb: 'Your technical department.',
+      includes: [
+        'Everything in Growth',
+        'Expanded hour envelope',
+        'Roadmap check-ins',
+        'Priority in the build queue'
+      ]
     }
   ],
   portfolio: [
@@ -41,48 +81,36 @@ export const site = {
       title: 'Service-business site rebuild',
       range: '$499–$1,200',
       problem: 'Old host down, no mobile layout, contact form broken.',
-      result: 'Cloudflare + Next deploy, booking path live, owner updates content without tickets.',
+      result: 'Live booking path, mobile-first pages, owner can update without tickets.',
+      metric: 'Inquiry path restored same week',
       stack: 'Next.js · Cloudflare · Form intake'
-    },
-    {
-      tag: 'Repair',
-      title: 'OS rescue + data recovery',
-      range: '$89–$199',
-      problem: 'Laptop would not boot; files needed same week for school and work.',
-      result: 'Boot restored, critical files recovered, simple backup routine so it does not repeat.',
-      stack: 'Windows / macOS · Imaging · Backup'
     },
     {
       tag: 'Automation',
       title: 'Internal workflow script',
       range: '$299–$800',
-      problem: 'Manual copy-paste between sheets and email was eating hours every week.',
-      result: 'Scoped script + handoff doc. One command replaces twenty clicks.',
+      problem: 'Manual copy-paste between sheets and email ate hours weekly.',
+      result: 'One command replaces a multi-step manual routine.',
+      metric: '~50% less admin on that workflow',
       stack: 'Python / Node · Sheets · Docs'
-    },
-    {
-      tag: 'Repair',
-      title: 'Water-damage triage + mail-in',
-      range: '$50–$200',
-      problem: 'Phone failed after liquid exposure; client needed contacts and photos.',
-      result: 'Remote intake, mail-in recovery attempt, clear outcome and next steps documented.',
-      stack: 'Diagnostics · Mail-in · Data priority'
     },
     {
       tag: 'Website',
       title: 'Conversion landing + estimate flow',
       range: '$299–$699',
-      problem: 'Pretty site, zero path from “interested” to “scoped job.”',
-      result: 'Instant estimate, quote handoff, sticky mobile CTA — same pattern as this site.',
-      stack: 'Next.js · Analytics events · Forms'
+      problem: 'Pretty site, zero path from interest to scoped job.',
+      result: 'Instant estimate, quote handoff, mobile CTA — same pattern as this site.',
+      metric: 'Clear path from visit → scope request',
+      stack: 'Next.js · Analytics · Forms'
     },
     {
-      tag: 'Lessons',
-      title: 'Structured remote guitar block',
-      range: 'From $40 / session',
-      problem: 'Random YouTube practice, no plan, stalled progress.',
-      result: '1-on-1 remote sessions with weekly focus and accountability.',
-      stack: 'Meet / Zoom · Curriculum · Progress notes'
+      tag: 'Repair',
+      title: 'OS rescue + data recovery',
+      range: '$89–$199',
+      problem: 'Laptop would not boot; files needed same week.',
+      result: 'Boot restored, critical files recovered, backup routine documented.',
+      metric: 'Same-week recovery',
+      stack: 'Imaging · Backup'
     }
   ],
   careIncludes: [
